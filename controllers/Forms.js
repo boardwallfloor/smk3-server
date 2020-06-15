@@ -3,22 +3,58 @@ const async = require('async')
 const debug = require('debug')('Forms')
 const { body, validationResult } = require('express-validator');
 
+exports.set_header = (req, res, next) =>{
+		Form.countDocuments().exec((err, results) => {
+		res.set('Content-Range', results);
+		next();
+		})
+	}
+
 exports.show_all = (req, res, next) => {
-	Form.find({}).exec(
+	if(req.query){
+		const filter = JSON.parse(req.query.filter)
+		const range = JSON.parse(req.query.range)
+		const sort = JSON.parse(req.query.sort)
+		const [start, end] = range;
+		const [resource, order] = sort;
+		const orderLowerCase = order.toLowerCase()
+		
+		debug(req.query);
+		debug(start, end)
+
+		// Form.find({}).sort({[resource]: [orderLowerCase]}).exec(
+		// 	(err, results) =>{
+		// 		// debug(results);
+		// 		res.json(results);
+		// 	}
+		// 	)
+		
+		Form.find({}).sort({[resource]: [orderLowerCase]}).skip(start).limit(end-start+1).exec(
+			(err, results) =>{
+				res.json(results)
+			})
+
+	}else{
+		Form.find({}).exec(
 		(err, results) =>{
 			if(err){return next(err);}
-			debug(results);
-			return results;
+			// debug(results);
+			res.json(results);
 		}
-		)
+		)	
+	}
+
+
+
+
 }
 
 exports.show_one = (req, res, next) => {
-	Form.findOne({title:req.title}).exec(
+	Form.findById(req.params.id).exec(
 		(err, results) =>{
 			if(err){return next(err);}
 			debug(results);
-			return results;
+			res.json(results);
 		}
 		)
 }

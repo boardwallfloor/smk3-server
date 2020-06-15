@@ -499,7 +499,7 @@ function createForm(cb) {
 
 async.series([
     createUser,
-    // createForm
+    createForm
 ],
 // Optional callback
 function(err, results) {

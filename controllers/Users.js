@@ -6,21 +6,46 @@ const debug = require('debug')('Users')
 
 const User = require('../models/user')
 
+exports.set_header = (req, res, next) =>{
+		User.countDocuments().exec((err, results) => {
+		res.set('Content-Range', results);
+		next();
+		})
+	}
+
 exports.show_all = (req, res, next) => {
-	User.find({}).exec(
+	if(req.query.range){
+		const filter = JSON.parse(req.query.filter)
+		debug(req.query.range);
+		const range = JSON.parse(req.query.range)
+		const sort = JSON.parse(req.query.sort)
+		const [start, end] = range;
+		const [resource, order] = sort;
+		const orderLowerCase = order.toLowerCase()
+		
+
+		User.find({}).sort({[resource]: [orderLowerCase]}).skip(start).limit(end-start+1).exec(
+			(err, results) =>{
+				debug(results)
+				res.json(results)
+			})
+
+	}else{
+		User.find({}).exec(
 		(err, results) =>{
 			if(err){return next(err);}
 			debug(results);
-			res.json(results)
-		})
+			res.json(results);
+		}
+		)	
+	}
 }
 
 exports.show_one = (req, res, next) => {
-	debug("test")
 	User.findById(req.params.id).exec(
 		(err, results) =>{
 			if(err){return next(err);}
-			debug(results);
+			// debug(results);
 			res.json(results);
 		})
 }
@@ -96,10 +121,4 @@ exports.create = [
 	}
 ]
 
-
-
-
-exports.login = passport.authenticate('local',{
-	successRedirect : '/',
-	failedRedirect : '/auth/login'
-})
+exports.login = passport.authenticate('local')
