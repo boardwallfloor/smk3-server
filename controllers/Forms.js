@@ -11,7 +11,18 @@ exports.set_header = (req, res, next) =>{
 	}
 
 exports.show_all = (req, res, next) => {
-	if(req.query){
+	console.log(Object.keys(req.query).length)
+	if(Object.keys(req.query).length === 0){
+		console.log("No query")
+		Form.find({}).exec(
+		(err, results) =>{
+			if(err){return next(err);}
+			// debug(results);
+			res.json(results);
+		}
+		)	
+
+	}else{
 		const filter = JSON.parse(req.query.filter)
 		const range = JSON.parse(req.query.range)
 		const sort = JSON.parse(req.query.sort)
@@ -21,27 +32,11 @@ exports.show_all = (req, res, next) => {
 		
 		debug(req.query);
 		debug(start, end)
-
-		// Form.find({}).sort({[resource]: [orderLowerCase]}).exec(
-		// 	(err, results) =>{
-		// 		// debug(results);
-		// 		res.json(results);
-		// 	}
-		// 	)
 		
 		Form.find({}).sort({[resource]: [orderLowerCase]}).skip(start).limit(end-start+1).exec(
 			(err, results) =>{
 				res.json(results)
 			})
-
-	}else{
-		Form.find({}).exec(
-		(err, results) =>{
-			if(err){return next(err);}
-			// debug(results);
-			res.json(results);
-		}
-		)	
 	}
 
 
@@ -111,7 +106,7 @@ exports.create = [
 		if(!error.isEmpty()){
 			throw new Error("Error : ");
 		}else{
-			const form = new Form({
+			const form = {
 				user: req.body.user,
 				title: req.body.title,
 				desc1: req.body.desc1,
@@ -119,10 +114,15 @@ exports.create = [
 				bool: req.body.bool,
 				enum1: req.body.enum1,
 				enum2:  req.body.enum2,
-			})
-			Form.save(function (err) {
-				if(err){return next(err);}
-				res.status(200).end();
+			}
+			debug(form);
+			// form.save(function (err) {
+			// 	if(err){return next(err);}
+			// 	res.status(200).end();
+			// })
+			Form.create(form, (err,results) => {
+				console.log(results)
+				res.send(results);
 			})
 		}
 	}

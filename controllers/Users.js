@@ -122,3 +122,8 @@ exports.create = [
 ]
 
 exports.login = passport.authenticate('local')
+
+exports.setUser = (req, res, next) => {
+	debug(req.session)
+	next();
+}
