@@ -11,9 +11,11 @@ require('dotenv').config();
 const initiliazePassport = require('./config/passport')
 
 //Routes
-var authRoutes = require('./routes/auth');
+var authRoutes = require('./routes/authRoutes.js');
 var userRoutes = require('./routes/userRoutes');
-var formRoutes = require('./routes/formRoutes');
+var institutionRoutes = require('./routes/institutionRoutes');
+var reportYearlyRoutes = require('./routes/reportYearRoutes');
+var reportSemesterlyRoutes = require('./routes/reportSemesterRoutes');
 
 
 
@@ -50,13 +52,17 @@ app.use(passport.session());
 //Routes Middleware
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
-app.use('/form', formRoutes);
+app.use('/reportyear', reportYearlyRoutes);
+app.use('/reportsemester', reportSemesterlyRoutes);
+app.use('/institution', institutionRoutes);
 
 console.log("Server running at port 9000");
 
 //TEST
 //For Development Only
-const testRoutes = require('./routes/testRoutes')
-app.use('/test',testRoutes);
+
+//console.log("Remember to comment Test in app.js when in production")
+// const testRoutes = require('./routes/testRoutes')
+// app.use('/test',testRoutes);
 
 module.exports = app;

@@ -55,6 +55,8 @@ exports.update = [
 	body('email').trim().isEmail(),
 	body('phonenumber').trim().isNumeric(),
 	body('privilege'),
+	body('jobtitle').trim().escape().isLength({min:1}),
+	body('nip').trim().escape().isLength({min:1}),
 	body('password').trim().isLength({min:1}),
 
 	async (req, res, next) => {
@@ -71,6 +73,8 @@ exports.update = [
 					email: req.body.email,
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
+					jobtitle: req.body.jobtitle,
+					nip: req.body.nip,
 					password : hashedPassword,
 					_id : req.params.id
 				})
@@ -94,7 +98,9 @@ exports.create = [
 	body('email').trim().isEmail(),
 	body('phonenumber').trim().isNumeric(),
 	body('privilege'),
-	body('password').trim(),
+	body('jobtitle').trim().escape().isLength({min:1}),
+	body('nip').trim().escape(),
+	body('password').trim().isLength({min:1}),
 	
 	async (req, res, next) => {
 		const error = validationResult(req);
@@ -109,6 +115,8 @@ exports.create = [
 					email: req.body.email,
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
+					jobtitle: req.body.jobtitle,
+					nip: req.body.nip,
 					password : hashedPassword
 				})
 				debug(user)
@@ -123,7 +131,8 @@ exports.create = [
 
 exports.login = passport.authenticate('local')
 
-exports.setUser = (req, res, next) => {
-	debug(req.session)
-	next();
-}
+// exports.login = passport.authenticate('local',{
+// 	successRedirect : '/',
+// 	failedRedirect : '/auth/login'
+// })
+
