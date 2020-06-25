@@ -19,9 +19,9 @@ const reportGroupSchema = new Schema({
 
 const ReportSemesterSchema = new Schema({
 	
-	// author: {type: Schema.Types.ObjectId, ref:'User', required: true},
-	author: {type: String, required: true},
+	author: {type: Schema.Types.ObjectId, ref:'User', required: true},
 	month: {type: String, required:true, enum:["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"], default: 'Januari'},
+	year: {type: Date, default: Date.now},
 	report: reportGroupSchema ,
 })
 

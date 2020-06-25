@@ -99,6 +99,7 @@ exports.create = [
 				const report = new Report({
 					author: req.body.author,
 					month: req.body.month,
+					year: req.body.year,
 					report: {
 						question1: {
 							total: req.body.report.question1.total,
@@ -159,6 +160,7 @@ exports.update = [
 					_id: req.params.id,
 					author: req.body.author,
 					month: req.body.month,
+					year: req.body.year,
 					report: {
 						question1: {
 							total: req.body.report.question1.total,

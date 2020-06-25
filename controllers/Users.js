@@ -172,19 +172,6 @@ exports.delete = (req, res, next) => {
 	}
 }
 
-// exports.delete_manu = (req, res, next) => {
-// 	User.findById(req.params.id).exec(
-// 		(err, results) =>{
-// 			if(err){return next(err);}
-// 			// debug(results);
-// 			res.json(results);
-// 		})
-
-
-// }
-
-
-
 exports.create = [
 	body('username', 'Username Error').trim().isLength({min:1}),
 	body('first_name', 'Test').trim().isLength({min:1}),

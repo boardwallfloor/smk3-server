@@ -88,7 +88,7 @@ exports.create = [
 			Institution.create(institution, (err, results) =>{
 				if(err){return next(err);}
 				debug(results)
-				res.send("Successfully created per Institution");
+				res.send(results);
 			})
 		}
 	}
@@ -120,7 +120,7 @@ exports.update = [
 			Institution.findByIdAndUpdate(req.params.id, institution, (err, results) =>{
 				if(err){return (next(err));}
 				debug(results)
-				res.send("Successfully updated per Institution");
+				res.send(results);
 			})
 		}
 	}
