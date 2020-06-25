@@ -13,32 +13,69 @@ exports.set_header = (req, res, next) =>{
 		})
 	}
 
-exports.show_all = (req, res, next) => {
-	if(req.query.range){
-		const filter = JSON.parse(req.query.filter)
-		debug(req.query.range);
+exports.show_all = async (req, res, next) => {
+
+	debug("Show all parameter length : "+Object.keys(req.query).length)
+
+	const handleRange = () => {
 		const range = JSON.parse(req.query.range)
-		const sort = JSON.parse(req.query.sort)
 		const [start, end] = range;
+		const limitation = end-start+1;
+		return [start,limitation];
+	}
+
+	const handleSort = () => {
+		const sort = JSON.parse(req.query.sort)
 		const [resource, order] = sort;
 		const orderLowerCase = order.toLowerCase()
-		
+		return sortOn={
+			[resource]: [orderLowerCase]
+		}
+	}
 
-		User.find({}).sort({[resource]: [orderLowerCase]}).skip(start).limit(end-start+1).exec(
-			(err, results) =>{
-				debug(results)
-				res.json(results)
-			})
+	const handleFilter = () => {
+		const filter = JSON.parse(req.query.filter)
+		return filter;
+	}
 
-	}else{
+
+	if(Object.keys(req.query).length === 0){
+		debug("No query")
 		User.find({}).exec(
 		(err, results) =>{
 			if(err){return next(err);}
-			debug(results);
+			// debug(results);
 			res.json(results);
 		}
 		)	
+
+	}else{
+		debug("Query :");
+		debug(req.query)
+		let filter;
+		let start, limitation;
+		let sort;
+
+		if(req.query.range != undefined){
+			const range  = await handleRange();
+			[start, limitation] = range;
+		}
+
+		if(req.query.filter != undefined){
+			filter = await handleFilter();
+		}
+
+		if(req.query.sort != undefined) {
+			sort = handleSort();
+		}
+		
+		User.find(filter).sort(sort).skip(start).limit(limitation).exec(
+			(err, results) =>{
+				// debug(results)
+				res.json(results)
+			})
 	}
+
 }
 
 exports.show_one = (req, res, next) => {
@@ -48,10 +85,14 @@ exports.show_one = (req, res, next) => {
 			// debug(results);
 			res.json(results);
 		})
+
+
 }
 
 exports.update = [
 	body('username').trim().isLength({min:1}),
+	body('first_name').trim().isLength({min:1}),
+	body('full_name').trim().isLength({min:1}),
 	body('email').trim().isEmail(),
 	body('phonenumber').trim().isNumeric(),
 	body('privilege'),
@@ -60,6 +101,7 @@ exports.update = [
 	body('password').trim().isLength({min:1}),
 
 	async (req, res, next) => {
+		console.log("msg")
 		const error = validationResult(req);
 
 		if(!error.isEmpty()){
@@ -71,6 +113,8 @@ exports.update = [
 				const user = new User({
 					username: req.body.username,
 					email: req.body.email,
+					first_name: req.body.first_name,
+					full_name: req.body.full_name,
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
 					jobtitle: req.body.jobtitle,
@@ -78,40 +122,93 @@ exports.update = [
 					password : hashedPassword,
 					_id : req.params.id
 				})
-				User.findByIdAndUpdate(req.params.id, user, function (err) {
+				User.findByIdAndUpdate(req.params.id, user, function (err, results) {
 					if(err){return next(err);}
-					res.status(200).send("Successfully updated user").end();
+					res.send(results);
 				})
 		}
 	}
 ]
 
 exports.delete = (req, res, next) => {
-	User.findByIdAndRemove(req.params.id).exec((err,results) =>{
+	debug("Delete parameter : "+req.params);
+	
+
+	debug(Object.keys(req.query).length)
+	if(Object.keys(req.query).length === 0){
+		debug("No query")
+		User.findByIdAndRemove(req.params.id).exec((err,results) =>{
 		if(err){return next(err);}
-		res.status(200).send("Sucessfully deleted user");
+		res.send(results);
 	})
+
+	}else{
+		debug(req.query);
+		let filter={};
+		let range={}, start, end, limitation;
+		let sort={}, orderLowerCase, sortOn={};
+		if(req.query.filter != undefined){
+		filter = JSON.parse(req.query.filter)
+		}
+		if(req.query.range != undefined){
+		range = JSON.parse(req.query.range)
+		[start, end] = range;
+		}
+		if(req.query.sort != undefined) {
+		sort = JSON.parse(req.query.sort)
+		debug(sort);
+		const [resource, order] = sort;
+		orderLowerCase = order.toLowerCase()
+		sortOn={
+			[resource]: [orderLowerCase]
+		}
+		}
+		// debug(start, end)
+		
+		User.find(filter).sort(sortOn).skip(start).limit(end-start+1).exec(
+			(err, results) =>{
+				res.json(results)
+			})
+	}
 }
 
+// exports.delete_manu = (req, res, next) => {
+// 	User.findById(req.params.id).exec(
+// 		(err, results) =>{
+// 			if(err){return next(err);}
+// 			// debug(results);
+// 			res.json(results);
+// 		})
+
+
+// }
+
+
+
 exports.create = [
-	body('username').trim().isLength({min:1}),
-	body('email').trim().isEmail(),
-	body('phonenumber').trim().isNumeric(),
-	body('privilege'),
-	body('jobtitle').trim().escape().isLength({min:1}),
-	body('nip').trim().escape(),
-	body('password').trim().isLength({min:1}),
+	body('username', 'Username Error').trim().isLength({min:1}),
+	body('first_name', 'Test').trim().isLength({min:1}),
+	body('full_name').trim().isLength({min:1}),
+	body('email', 'Email Error').trim().isEmail(),
+	body('phonenumber','Phone Number Error').trim().isNumeric(),
+	body('privilege',' Privilege Error'),
+	body('jobtitle','Job Title Error').trim().escape().isLength({min:1}),
+	body('nip','NIP Error').trim().escape(),
+	body('password','Password Error').trim().isLength({min:1}),
 	
 	async (req, res, next) => {
 		const error = validationResult(req);
 		if(!error.isEmpty()){
-			throw new Error("Error : ")
+			console.log(error)
+			throw new Error(error[0].msg)
 		}else{
 
 				const hashedPassword = await bcrypt.hash(req.body.password,10)
 
 				const user = new User({
 					username: req.body.username,
+					first_name: req.body.first_name,
+					full_name: req.body.full_name,
 					email: req.body.email,
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
@@ -120,9 +217,9 @@ exports.create = [
 					password : hashedPassword
 				})
 				debug(user)
-				user.save(function (err) {
+				user.save(function (err, results) {
 					if(err){return next(err);}
-					res.status(200).end();
+					res.send(results);
 				})
 
 		}

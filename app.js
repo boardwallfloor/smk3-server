@@ -21,7 +21,7 @@ var reportSemesterlyRoutes = require('./routes/reportSemesterRoutes');
 
 //Mongo
 const MongoDB = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-l7zho.mongodb.net/test?retryWrites=true&w=majority`;
-mongoose.connect(MongoDB, {useUnifiedTopology : true, useNewUrlParser: true});
+mongoose.connect(MongoDB, {useUnifiedTopology : true, useNewUrlParser: true, useCreateIndex: true });
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 
@@ -29,10 +29,11 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 var app = express();
 const corsOptions = {
   origin: ['http://localhost:3000','192.168.100.62:3000'],
+  credentials: true,
   exposedHeaders: ['Content-Range'],
 }
 app.use(cors(corsOptions))
-
+// console.log(corsOptions)
 initiliazePassport(passport);
 
 app.use(logger('dev'));

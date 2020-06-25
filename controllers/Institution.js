@@ -24,17 +24,29 @@ exports.show_all = (req, res, next) => {
 		)	
 
 	}else{
-		debug(req.query.filter);
-		const filter = JSON.parse(req.query.filter)
-		const range = JSON.parse(req.query.range)
-		const sort = JSON.parse(req.query.sort)
-		const [start, end] = range;
+		debug(req.query);
+		let filter={};
+		let range={}, start, end, limitation;
+		let sort={}, orderLowerCase, sortOn={};
+		if(req.query.filter != undefined){
+		filter = JSON.parse(req.query.filter)
+		}
+		if(req.query.range != undefined){
+		range = JSON.parse(req.query.range)
+		[start, end] = range;
+		}
+		if(req.query.sort != undefined) {
+		sort = JSON.parse(req.query.sort)
+		debug(sort);
 		const [resource, order] = sort;
-		const orderLowerCase = order.toLowerCase()
-		
+		orderLowerCase = order.toLowerCase()
+		sortOn={
+			[resource]: [orderLowerCase]
+		}
+		}
 		// debug(start, end)
 		
-		Institution.find(filter).sort({[resource]: [orderLowerCase]}).skip(start).limit(end-start+1).exec(
+		Institution.find(filter).sort(sortOn).skip(start).limit(end-start+1).exec(
 			(err, results) =>{
 				res.json(results)
 			})

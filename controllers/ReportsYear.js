@@ -12,8 +12,31 @@ exports.set_header = (req, res, next) =>{
 	}
 
 
-exports.show_all = (req, res, next) => {
+exports.show_all = async (req, res, next) => {
+
 	debug(Object.keys(req.query).length)
+
+	const handleRange = () => {
+		const range = JSON.parse(req.query.range)
+		const [start, end] = range;
+		const limitation = end-start+1;
+		return [start,limitation];
+	}
+
+	const handleSort = () => {
+		const sort = JSON.parse(req.query.sort)
+		const [resource, order] = sort;
+		const orderLowerCase = order.toLowerCase()
+		return sortOn={
+			[resource]: [orderLowerCase]
+		}
+	}
+
+	const handleFilter = () => {
+		const filter = JSON.parse(req.query.filter)
+		return filter;
+	}
+
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
 		Report.find({}).exec(
@@ -25,17 +48,26 @@ exports.show_all = (req, res, next) => {
 		)	
 
 	}else{
-		const filter = JSON.parse(req.query.filter)
-		const range = JSON.parse(req.query.range)
-		const sort = JSON.parse(req.query.sort)
-		const [start, end] = range;
-		const [resource, order] = sort;
-		const orderLowerCase = order.toLowerCase()
+		debug("Query :");
+		debug(req.query)
+		let filter;
+		let start, limitation;
+		let sort;
+
+		if(req.query.range != undefined){
+			const range  = await handleRange();
+			[start, limitation] = range;
+		}
+
+		if(req.query.filter != undefined){
+			filter = await handleFilter();
+		}
+
+		if(req.query.sort != undefined) {
+			sort = handleSort();
+		}
 		
-		debug(req.query);
-		debug(start, end)
-		
-		Report.find({}).sort({[resource]: [orderLowerCase]}).skip(start).limit(end-start+1).exec(
+		Report.find(filter).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
 				res.json(results)
 			})
