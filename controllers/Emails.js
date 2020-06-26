@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const fs = require("fs");
 const ejs = require("ejs")
 
-exports.sendEmail =  (req, res, next) => {
+exports.sendEmail =  (results) => {
     // Generate SMTP service account from ethereal.email
     nodemailer.createTestAccount( async (err, account) => {
         if (err) {
@@ -32,13 +32,15 @@ exports.sendEmail =  (req, res, next) => {
             pass: "ba3b146d87a065"
           }
         });
+        console.log("Finding Template")
+        // const data = await ejs.renderFile('../config/emailTemplate.ejs');
+        const data = await ejs.renderFile(__dirname + "/emailTemplate.ejs", { results: results })
 
-        const data = await ejs.renderFile("../config/emailTemplate.ejs");
-
+        console.log("Template found, forming message")
         // Message object
         let message = {
             from: 'Sender Name <sender@example.com>',
-            to: 'Recipient <recipient@example.com>',
+            to: `Recipient ${results.remindee.email}`,
             subject: 'Remider to file SM3 report',
             text: 'Hello to myself!',
             html: data
@@ -52,8 +54,8 @@ exports.sendEmail =  (req, res, next) => {
 
             console.log('Message sent: %s', info.messageId);
             // Preview only available when sending through an Ethereal account
-            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-        res.send("Email sent!")
+            // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        console.log("Email Sent!")
         });
     });
 }
