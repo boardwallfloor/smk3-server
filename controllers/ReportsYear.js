@@ -92,9 +92,10 @@ exports.create = [
 
 	(req, res, next) => {
 		// debug(req.body)
-		debug(req.body.year)
+		debug(req.body)
 		const error = validationResult(req)
 		if(!error.isEmpty()){
+			debug(error)
 			throw new Error();
 		}else{
 			

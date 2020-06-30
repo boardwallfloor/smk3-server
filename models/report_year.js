@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 const moment = require('moment')
 
 const BoolQuestionSchema = new Schema({
-	information: {type: Boolean, required: true},
+	information: {type: Boolean, required: true, default: false},
 },{ _id : false })
 
 const TextQuestionSchema = new Schema({
-	information: {type: String, required: true},
+	information: {type: String, required: true, default:null},
 },{ _id : false })
 
 const DuoBoolQuestionSchema = new Schema({

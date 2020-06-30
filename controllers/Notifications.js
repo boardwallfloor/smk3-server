@@ -86,11 +86,15 @@ exports.create = [
 				report_type: req.body.report_type,
 			})
 			// debug(institution);
-			Notification.create(notification, (err, results) =>{
+			Notification.create(notification, async (err, results) =>{
 				if(err){return next(err);}
+				debug("Notification created and saved")
 				debug(results)
-				Notification.findById(results._id).populate('remindee').exec(async (err, results) => {
-				await cronjob.startSchedule(results);
+				Notification.findById(results._id).populate('remindee').exec(async (err, data) => {
+					if(err){return next(err);}
+					debug('Data : %O', data);
+					debug('Results : %O', results);
+					await cronjob.startSchedule(data);
 				})
 				res.send(results);
 			})
@@ -129,32 +133,18 @@ exports.update = [
 
 ]
 
-exports.setCompletionToTrue = [
-	body('complete_status'),
-	body('remindee'),
-	body('remind_date').toDate().optional({ checkFalsy: true }).isISO8601(),
-	body('report_type'),
-	
-	(req, res, next) => {
-		const error = validationResult(req);
+exports.setCompletionToTrue = (req, res, next) => {
+			debug(req)
+			Notification.findById(req).exec(async (err, results) => {
+			results.complete_status = true
+			await results.save()
+;			debug('Results from notif setToTrue : %O',results)
 
-		if(!error.isEmpty()){
-			throw new Error("Error : ");
-		}else{
-			const notification = new Notification({
-				_id: req.params.id,
-				complete_status: true,
-			})
-			// debug(report)
-			Notification.findByIdAndUpdate(req.params.id, notification, (err, results) =>{
-				if(err){return (next(err));}
-				debug(results)
-				res.send(results);
 			})
 		}
-	}
+	
 
-]
+
 
 exports.delete = (req, res, next) => {
 	Notification.findByIdAndRemove(req.params.id).exec((err,results) =>{
@@ -162,4 +152,8 @@ exports.delete = (req, res, next) => {
 		// res.status(200).send("Sucessfully deleted Notification");
 		res.json(results);
 	})
+}
+
+exports.test = () => {
+	console.log("Sent from Notifications controller")
 }
