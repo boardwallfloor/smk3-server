@@ -84,6 +84,21 @@ exports.show_one = (req, res, next) => {
 		)
 }
 
+exports.show_ten = (req, res, next) => {
+	async.parallel({
+		data: (callback) => {
+			Report.find({}).sort('year +1').populate('author').populate('institution').limit(10).exec(callback)
+		},
+		count: (callback) => {
+			Report.countDocuments({}).exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		console.log(results)
+		res.json(results);
+	})
+}
+
 exports.create = [
 	body('author').trim().escape().isLength({min:1}),
 	body('total').trim().isLength({min:1}).isNumeric(),
@@ -178,16 +193,17 @@ exports.create = [
 ]
 
 exports.update = [
-	body('author').trim().escape().isLength({min:1}),
-	body('total').trim().isLength({min:1}).isNumeric(),
-	body('area').trim().isLength({min:1}).isNumeric(),
-	body('year').toDate().optional({ checkFalsy: true }).isISO8601(),
+	body('author'),
+	body('total', "total").trim().isLength({min:1}).isNumeric(),
+	body('area',"area").trim().isLength({min:1}).isNumeric(),
+	body('year',"year").toDate().optional({ checkFalsy: true }).isISO8601(),
 
 	(req, res, next) => {
 		// debug(req.body)
 		debug(req.body.year)
 		const error = validationResult(req)
 		if(!error.isEmpty()){
+			debug(error.errors)
 			throw new Error();
 		}else{
 			

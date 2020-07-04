@@ -13,8 +13,30 @@ exports.set_header = (req, res, next) =>{
 		})
 	}
 
-exports.show_all = (req, res, next) => {
+exports.show_all = async (req, res, next) => {
+
 	debug(Object.keys(req.query).length)
+
+	const handleRange = () => {
+		const range = JSON.parse(req.query.range)
+		const [start, end] = range;
+		const limitation = end-start+1;
+		return [start,limitation];
+	}
+
+	const handleSort = () => {
+		const sort = JSON.parse(req.query.sort)
+		const [resource, order] = sort;
+		const orderLowerCase = order.toLowerCase()
+		return sortOn={
+			[resource]: [orderLowerCase]
+		}
+	}
+
+	const handleFilter = () => {
+		const filter = JSON.parse(req.query.filter)
+		return filter;
+	}
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
 		Notification.find({}).exec(
@@ -26,29 +48,26 @@ exports.show_all = (req, res, next) => {
 		)	
 
 	}else{
-		debug(req.query);
-		let filter={};
-		let range={}, start, end, limitation;
-		let sort={}, orderLowerCase, sortOn={};
-		if(req.query.filter != undefined){
-		filter = JSON.parse(req.query.filter)
-		}
+		debug("Query :");
+		debug(req.query)
+		let filter;
+		let start, limitation;
+		let sort;
+
 		if(req.query.range != undefined){
-		range = JSON.parse(req.query.range)
-		[start, end] = range;
+			const range  = await handleRange();
+			[start, limitation] = range;
 		}
+
+		if(req.query.filter != undefined){
+			filter = await handleFilter();
+		}
+
 		if(req.query.sort != undefined) {
-		sort = JSON.parse(req.query.sort)
-		debug(sort);
-		const [resource, order] = sort;
-		orderLowerCase = order.toLowerCase()
-		sortOn={
-			[resource]: [orderLowerCase]
+			sort = handleSort();
 		}
-		}
-		// debug(start, end)
-		
-		Notification.find(filter).sort(sortOn).skip(start).limit(end-start+1).exec(
+
+		Notification.find(filter).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
 				res.json(results)
 			})
@@ -64,6 +83,21 @@ exports.show_one = (req, res, next) => {
 			res.json(results);
 		}
 		)
+}
+
+exports.show_ten = (req, res, next) => {
+	async.parallel({
+		data: (callback) => {
+			Notification.find({}).sort('year +1').limit(10).exec(callback)
+		},
+		count: (callback) => {
+			Notification.countDocuments({}).exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		console.log(results)
+		res.json(results);
+	})
 }
 
 exports.create = [

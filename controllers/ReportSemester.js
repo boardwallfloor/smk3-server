@@ -85,6 +85,21 @@ exports.show_one = (req, res, next) => {
 		)
 }
 
+exports.show_ten = (req, res, next) => {
+	async.parallel({
+		data: (callback) => {
+			Report.find({}).sort('year +1').populate('author').limit(10).exec(callback)
+		},
+		count: (callback) => {
+			Report.countDocuments({}).exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		console.log(results)
+		res.json(results);
+	})
+}
+
 exports.create = [
 	body('author').trim().isLength({min:1}),
 	body('month').isLength({min:1}),
@@ -139,7 +154,7 @@ exports.create = [
 				Report.create(report, (err, results) =>{
 					if(err){return next(err);}
 					debug(results)
-					res.send("Successfully created per Semester Report");
+					res.json(results);
 				})
 		}
 	}
@@ -200,7 +215,7 @@ exports.update = [
 				Report.findByIdAndUpdate(req.params.id, report, (err, results) =>{
 					if(err){return (next(err));}
 					debug(results)
-					res.send("Successfully updated per Semester Report");
+					res.json(results);
 				})
 		}
 	}	
@@ -209,7 +224,7 @@ exports.update = [
 exports.delete = (req, res, next) => {
 	Report.findByIdAndRemove(req.params.id).exec((err,results) =>{
 		if(err){return next(err);}
-		res.send("Sucessfully deleted per Semester Report");
+		res.json(results);
 	})
 }
 
