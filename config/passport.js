@@ -2,12 +2,15 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const async = require('async');
 const debug = require('debug')('passport');
+const passportJWT = require("passport-jwt");
+const JWTStrategy   = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
 
 const User = require('../models/user');
 
 function initialize(passport) {
 
-    const authenticateUser = async (username, password, done) => {
+    const authenticateUser = (username, password, done) => {
 
         debug(username, password)
         async.series({
@@ -50,6 +53,7 @@ function initialize(passport) {
         })
     
         )
+
 
 
 

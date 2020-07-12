@@ -5,6 +5,26 @@ const { body, validationResult } = require('express-validator');
 const Notification = require('../models/notification');
 const cronjob = require('../config/CronJob')
 
+const handleFilter = (filter) => {
+		const filterJson = JSON.parse(filter)
+		return filterJson;
+	}
+
+const handleRange = (range) => {
+	const rangeJson = JSON.parse(range)
+	const [start, end] = rangeJson;
+	const limitation = end-start+1;
+	return [start,limitation];
+}
+
+const handleSort = (sort) => {
+	const sortJson = JSON.parse(sort)
+	const [resource, order] = sortJson;
+	const orderLowerCase = order.toLowerCase()
+	return sortOn={
+		[resource]: [orderLowerCase]
+	}
+}
 
 exports.set_header = (req, res, next) =>{
 		Notification.countDocuments().exec((err, results) => {
@@ -17,54 +37,38 @@ exports.show_all = async (req, res, next) => {
 
 	debug(Object.keys(req.query).length)
 
-	const handleRange = () => {
-		const range = JSON.parse(req.query.range)
-		const [start, end] = range;
-		const limitation = end-start+1;
-		return [start,limitation];
-	}
 
-	const handleSort = () => {
-		const sort = JSON.parse(req.query.sort)
-		const [resource, order] = sort;
-		const orderLowerCase = order.toLowerCase()
-		return sortOn={
-			[resource]: [orderLowerCase]
-		}
-	}
 
-	const handleFilter = () => {
-		const filter = JSON.parse(req.query.filter)
-		return filter;
-	}
+	
+
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
 		Notification.find({}).exec(
 		(err, results) =>{
 			if(err){return next(err);}
 			// debug(results);
-			res.json(results);
+			res.json(results).send("Error lol");
 		}
 		)	
 
 	}else{
 		debug("Query :");
 		debug(req.query)
-		let filter;
+		let filter={};
 		let start, limitation;
 		let sort;
 
 		if(req.query.range != undefined){
-			const range  = await handleRange();
+			const range  = await handleRange(req.query.range);
 			[start, limitation] = range;
 		}
 
 		if(req.query.filter != undefined){
-			filter = await handleFilter();
+			filter = await handleFilter(req.query.filter);
 		}
 
 		if(req.query.sort != undefined) {
-			sort = handleSort();
+			sort = handleSort(req.query.sort);
 		}
 
 		Notification.find(filter).sort(sort).skip(start).limit(limitation).exec(
@@ -85,17 +89,23 @@ exports.show_one = (req, res, next) => {
 		)
 }
 
-exports.show_ten = (req, res, next) => {
+exports.show_ten = async (req, res, next) => {
+	let filter={};
+	debug(req.query)
+
+	if(req.query.filter != undefined){
+		filter = await handleFilter(req.query.filter);
+	}			
 	async.parallel({
 		data: (callback) => {
-			Notification.find({}).sort('year +1').limit(10).exec(callback)
+			Notification.find(filter).sort('year +1').limit(10).exec(callback)
 		},
 		count: (callback) => {
-			Notification.countDocuments({}).exec(callback)
+			Notification.countDocuments(filter).exec(callback)
 		}
 	},(err, results) => {
 		if(err){return next(err);}
-		console.log(results)
+		debug(results)
 		res.json(results);
 	})
 }

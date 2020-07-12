@@ -22,6 +22,7 @@ const ReportSemesterSchema = new Schema({
 	author: {type: Schema.Types.ObjectId, ref:'User', required: true},
 	month: {type: String, required:true, enum:["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"], default: 'Januari'},
 	year: {type: Date, default: Date.now},
+	institution:{type: Schema.Types.ObjectId, ref:'Institution', required: true},
 	report: reportGroupSchema ,
 })
 

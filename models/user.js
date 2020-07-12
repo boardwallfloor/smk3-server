@@ -8,9 +8,9 @@ const UserSchema = new Schema({
 	first_name:{type: String, required: true},
 	full_name:{type: String, required: true},
 	email:{type: String, required: true},
-	phonenumber:{type: String, required: true},
+	phonenumber:{type: Number, required: true},
 	privilege:{type: String, required:true, enum:['Admin','User'], default: 'User'},
-	jobtitle:{type: String, required:true},
+	job_title:{type: String, required:true},
 	nip: {type:String, default: null},
 	password:{type: String, required: true, min:8}
 })

@@ -58,7 +58,6 @@ const reportGroupSchema = new Schema({
 const ReportYearSchema = new Schema({
 	
 	author: {type: Schema.Types.ObjectId, ref:'User', required: true},
-	// author: {type: String, required: true},
 	institution:{type: Schema.Types.ObjectId, ref:'Institution', required: true},
 	total:{type: Number, required: true},
 	year: {type: Date},
