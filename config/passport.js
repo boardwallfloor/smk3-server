@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const async = require('async');
 const debug = require('debug')('passport');
 const passportJWT = require("passport-jwt");
+const passport = require('passport')
 const JWTStrategy   = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
@@ -53,10 +54,25 @@ function initialize(passport) {
         })
     
         )
-
-
-
-
 }
 
-module.exports = initialize;
+	const jwtAuthentication = () => {
+		passport.use(new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey   : `${process.env.JWT_SECRET}`
+	    },
+	    function (jwtPayload, cb) {
+
+	        //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
+	        return UserModel.findOneById(jwtPayload.id)
+	            .then(user => {
+	                return cb(null, user);
+	            })
+	            .catch(err => {
+	                return cb(err);
+	            });
+	    }
+	));
+	}
+
+module.exports = {initialize, jwtAuthentication};

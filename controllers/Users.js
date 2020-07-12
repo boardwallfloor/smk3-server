@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const debug = require('debug')('Users')
 
+const passport = require('passport')
 const jwt = require('jsonwebtoken');
 
 
@@ -219,28 +220,21 @@ exports.create = [
 
 //Authentication
 
-exports.login = function (req, res) {
-	debug('test')
+exports.login = function (req, res, next) {
     passport.authenticate('local', {session: false}, (err, user, info) => {
-		debug("Error : ")
-		debug(err)
-		debug('User : ',user)
         if (err || !user) {
             return res.status(400).json({
                 message: 'Something is not right',
                 user   : user
             });
-        }      
-        req.login(user, {session: false}, (err) => {
+        }       req.login(user, {session: false}, (err) => {
            if (err) {
-           	debug(err)
                res.send(err);
-           }           // generate a signed son web token with the contents of user object and return it in the response
-
-           const token = jwt.sign(user.toJSON(), `${process.env.JWT_SECRET}`);
+           }           // generate a signed son web token with the contents of user object and return it in the response           
+           const token = jwt.sign(user.toString(), `${process.env.JWT_SECRET}`);
            return res.json({user, token});
         });
-    })(req, res);
+    })(req, res, next);
 }
 
 exports.checkAuth =  () => {
