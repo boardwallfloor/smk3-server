@@ -9,6 +9,7 @@ const user_controller = require('../controllers/Users');
 
 /* POST login. */
 router.post('/login', user_controller.login);
+router.post('/authenticated', user_controller.checkAuth)
 
 // router.post('/test', user_controller.testAuthCheck)
 // router.post('/login', user_controller.login);

@@ -7,6 +7,7 @@ const passport = require('passport')
 const JWTStrategy   = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
+
 const User = require('../models/user');
 
 function initialize(passport) {
@@ -61,11 +62,22 @@ function initialize(passport) {
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey   : `${process.env.JWT_SECRET}`
 	    },
-	    function (jwtPayload, cb) {
+	    async (jwtPayload, cb) => {
 
-	        //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
-	        return UserModel.findOneById(jwtPayload.id)
+	    	//TODO: figure out on how to make jwtpayload into object
+	    	debug(typeof jwtPayload)
+	    	const json = await JSON.parse(jwtPayload);
+	    	async.series({
+	    		user : (callback) => {
+	    			User.findById(json._id).exec(callback)
+	    		}
+	    	},(err, results) => {
+	    		console.log(results)
+	    		return cb(null, results);
+	    	})
+	        return User.findById(jwtPayload._id)
 	            .then(user => {
+	            	// console.log(user)
 	                return cb(null, user);
 	            })
 	            .catch(err => {

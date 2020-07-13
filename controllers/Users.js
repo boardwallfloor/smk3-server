@@ -231,17 +231,32 @@ exports.login = function (req, res, next) {
            if (err) {
                res.send(err);
            }           // generate a signed son web token with the contents of user object and return it in the response           
-           const token = jwt.sign(user.toString(), `${process.env.JWT_SECRET}`);
-           return res.json({user, token});
+           const token = jwt.sign(user.toJSON(), `${process.env.JWT_SECRET}`);
+           return res.json(token);
         });
     })(req, res, next);
 }
 
-exports.checkAuth =  () => {
-	passport.authenticate('jwt', {session: false}),
-function(req, res) {
-        res.send(req.user.profile);
-    	debug('test')
-    }
+// exports.checkAuth =  () => {
+// 	passport.authenticate('jwt', {session: false}),
+// function(req, res) {
+//         res.send(req.user.profile);
+//     	debug('test')
+//     }
 
+// }
+
+exports.checkAuth = (req, res, next) => {
+	// debug(req.headers)
+	passport.authenticate('jwt', { session: false }, (err,user) => {
+		debug('test1')
+		if (err || !user) {
+            return res.status(400).json({
+                message: 'Something is not right',
+                user   : user
+            });
+        } 
+		if(err){return new Error (err)};
+		res.send(user);
+	})(req, res, next);
 }
