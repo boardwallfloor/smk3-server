@@ -12,18 +12,18 @@ const User = require('../models/user');
 
 function initialize(passport) {
 
-    const authenticateUser = (username, password, done) => {
+    const authenticateUser =  (username, password, done) => {
 
         debug(username, password)
         async.series({
                 user: function(callback) {
                     User.findOne({ username: username }).exec(callback);
                 }
-            }, function(err, results) {
+            },async function(err, results) {
                 debug(results)
                 if(results.user === null){
                     debug("Null")
-                    return done(null, false,{ msg: "Username or password is null"})
+                    return done(null, false,{ msg: "Username is not found"})
                 }
                 if (err) { return next(err); }
                 debug(results.user.username);
@@ -31,7 +31,7 @@ function initialize(passport) {
                     debug('No Username')
                     return done(null, false, { msg: "Incorrect username" });
                 }
-                if (bcrypt.compare(password, results.user.password)) {
+                if (await bcrypt.compare(password, results.user.password)) {
                     debug("Authentication successfull")
                     return done(null, results.user);
                 } else {

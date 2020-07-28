@@ -183,7 +183,7 @@ exports.create = [
 	body('email', 'Email Error').trim().isEmail(),
 	body('phonenumber','Phone Number Error').trim().isNumeric(),
 	body('privilege',' Privilege Error'),
-	body('jobtitle','Job Title Error').trim().escape().isLength({min:1}),
+	body('job_title','Job Title Error').trim().escape().isLength({min:1}),
 	body('nip','NIP Error').trim().escape(),
 	body('password','Password Error').trim().isLength({min:1}),
 	
@@ -203,7 +203,7 @@ exports.create = [
 					email: req.body.email,
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
-					jobtitle: req.body.jobtitle,
+					job_title: req.body.job_title,
 					nip: req.body.nip,
 					password : hashedPassword
 				})
@@ -223,9 +223,10 @@ exports.create = [
 exports.login = function (req, res, next) {
     passport.authenticate('local', {session: false}, (err, user, info) => {
         if (err || !user) {
+        	debug(typeof info.msg)
             return res.status(400).json({
-                message: 'Something is not right',
-                user   : user
+                message: info.msg,
+                user   : user,
             });
         }       req.login(user, {session: false}, (err) => {
            if (err) {
