@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session')
 const cors = require('cors');
+const debug = require('debug')('server');
 require('dotenv').config();
 
 const initiliazePassport = require('./config/passport')
@@ -38,10 +39,13 @@ app.use(cors(corsOptions))
 initiliazePassport.initialize(passport);
 initiliazePassport.jwtAuthentication()
 
+app.use(express.json({limit: '50mb', extended: true}));
+app.use(express.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+debug('test')
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
 	secret: `${process.env.SS_SECRET}`,
@@ -62,11 +66,5 @@ app.use('/notif', notificationRoutes);
 
 console.log("Server running at port 9000");
 
-//TEST
-//For Development Only
-
-//console.log("Remember to comment Test in app.js when in production")
-// const testRoutes = require('./routes/testRoutes')
-// app.use('/test',testRoutes);
 
 module.exports = app;

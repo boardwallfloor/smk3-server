@@ -1,6 +1,9 @@
 const async = require('async')
 const debug = require('debug')('institution')
 const { body, validationResult } = require('express-validator');
+//Test
+	
+var fs = require('fs');
 
 const Institution = require('../models/institution.js')
 
@@ -54,11 +57,19 @@ exports.show_all = (req, res, next) => {
 
 }
 
-exports.show_one = (req, res, next) => {
+exports.show_one =  (req, res, next) => {
 	Institution.findById(req.params.id).exec(
-		(err, results) =>{
+		async (err, results) =>{
 			if(err){return next(err);}
-			debug(results);
+			if(results.file){
+				debug('File : ');
+				debug(typeof results.file.src);
+				debug(results.file.src);
+				// split to get data part of mime format
+				const file = Buffer.from(results.file.src.split(",")[1], 'base64');
+				debug(results.file.title);
+				await fs.writeFileSync(__dirname +`/${results.file.title}`,file);
+			}
 			res.json(results);
 		}
 		)
@@ -69,22 +80,35 @@ exports.create = [
 	body('address').trim().escape().isLength({min:1}),
 	body('city').trim().escape().isLength({min:1}),
 	body('province').trim().escape().isLength({min:1}),
-	body('area').trim().isLength({min:1}).isNumeric(),
+	body('file'),
 	
-	(req, res, next) => {
+	async (req, res, next) => {
+		debug('Body : ')
+		debug(req.body)
+		
 		const error = validationResult(req);
-
 		if(!error.isEmpty()){
-			throw new Error("Error : ");
+			debug('Error : %O',error)
+			throw new Error();
 		}else{
+
 			const institution = new Institution({
 				name: req.body.name,
 				address: req.body.address,
 				city: req.body.city,
 				province: req.body.province,
-				area: req.body.area
+				file: {
+					rawFile:{
+						path: req.body.file.rawFile.path
+					},
+					src: req.body.file.src,
+					// src: string64File,
+					title: req.body.file.title
+				},
+				// file: req.body.file.rawFile.data
 			})
-			// debug(institution);
+			debug('Institution : ');
+			debug(institution);
 			Institution.create(institution, (err, results) =>{
 				if(err){return next(err);}
 				debug(results)
@@ -100,7 +124,6 @@ exports.update = [
 	body('address').trim().escape().isLength({min:1}),
 	body('city').trim().escape().isLength({min:1}),
 	body('province').trim().escape().isLength({min:1}),
-	body('area').trim().isLength({min:1}).isNumeric(),
 	
 	(req, res, next) => {
 		const error = validationResult(req);
@@ -114,7 +137,6 @@ exports.update = [
 				address: req.body.address,
 				city: req.body.city,
 				province: req.body.province,
-				area: req.body.area
 			})
 			// debug(report)
 			Institution.findByIdAndUpdate(req.params.id, institution, (err, results) =>{
@@ -129,8 +151,9 @@ exports.update = [
 
 exports.delete = (req, res, next) => {
 	Institution.findByIdAndRemove(req.params.id).exec((err,results) =>{
+		debug(results)
 		if(err){return next(err);}
 		// res.status(200).send("Sucessfully deleted Institution");
-		res.json(results);
+		res.send(results);
 	})
 }

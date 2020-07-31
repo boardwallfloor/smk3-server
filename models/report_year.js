@@ -10,6 +10,10 @@ const TextQuestionSchema = new Schema({
 	information: {type: String, required: true, default:null},
 },{ _id : false })
 
+const FileUploadSchema = new Schema({
+	file: {type: Buffer},
+},{ _id : false })
+
 const DuoBoolQuestionSchema = new Schema({
 	a: BoolQuestionSchema,
 	b: BoolQuestionSchema,
@@ -62,6 +66,7 @@ const ReportYearSchema = new Schema({
 	totalSDM:{type: Number, required: true},
 	year: {type: Date},
 	report: reportGroupSchema,
+	file:{type: Buffer}
 })
 
 ReportYearSchema

@@ -122,6 +122,7 @@ exports.update = [
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
 					jobtitle: req.body.jobtitle,
+					user_institution: req.body.user_institution,
 					nip: req.body.nip,
 					password : hashedPassword,
 					_id : req.params.id
@@ -204,6 +205,7 @@ exports.create = [
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
 					job_title: req.body.job_title,
+					user_institution: req.body.user_institution,
 					nip: req.body.nip,
 					password : hashedPassword
 				})
@@ -238,14 +240,6 @@ exports.login = function (req, res, next) {
     })(req, res, next);
 }
 
-// exports.checkAuth =  () => {
-// 	passport.authenticate('jwt', {session: false}),
-// function(req, res) {
-//         res.send(req.user.profile);
-//     	debug('test')
-//     }
-
-// }
 
 exports.checkAuth = (req, res, next) => {
 	// debug(req.headers)
@@ -260,4 +254,8 @@ exports.checkAuth = (req, res, next) => {
 		if(err){return new Error (err)};
 		res.send(user);
 	})(req, res, next);
+}
+
+exports.testUpload = (req, res, next) => {
+	
 }

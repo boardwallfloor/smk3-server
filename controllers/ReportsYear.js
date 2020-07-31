@@ -113,6 +113,7 @@ exports.create = [
 
 	(req, res, next) => {
 		// debug(req.body)
+		debug("Body : ")
 		debug(req.body)
 		const error = validationResult(req)
 		if(!error.isEmpty()){
@@ -125,6 +126,7 @@ exports.create = [
 					total: req.body.total,
 					year: req.body.year,
 					institution: req.body.institution,
+					file: req.body.file,
 					report: {
 						question1: {
 							a: {information: req.body.report.question1.a.information},
