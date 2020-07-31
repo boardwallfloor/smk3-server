@@ -7,16 +7,6 @@ const InstitutionSchema = new Schema({
 	address: {type: String, required: true, max: 300},
 	city: {type: String, required: true, max: 25},
 	province: {type: String, required: true, max: 25},
-
-	//TEST
-	file:{ 
-		rawFile :{
-			path:{type: String}
-		},
-		src:{type: String},
-		title: {type: String}
-	}
-	// file:{type: Buffer}
 })
 
 module.exports = mongoose.model('Institution', InstitutionSchema);

@@ -11,7 +11,13 @@ const TextQuestionSchema = new Schema({
 },{ _id : false })
 
 const FileUploadSchema = new Schema({
-	file: {type: Buffer},
+	file:{ 
+		rawFile :{
+			path:{type: String}
+		},
+		src:{type: String},
+		title: {type: String}
+	}
 },{ _id : false })
 
 const DuoBoolQuestionSchema = new Schema({
@@ -66,7 +72,6 @@ const ReportYearSchema = new Schema({
 	totalSDM:{type: Number, required: true},
 	year: {type: Date},
 	report: reportGroupSchema,
-	file:{type: Buffer}
 })
 
 ReportYearSchema
