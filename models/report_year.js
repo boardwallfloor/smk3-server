@@ -4,20 +4,17 @@ const moment = require('moment')
 
 const BoolQuestionSchema = new Schema({
 	information: {type: Boolean, required: true, default: false},
-},{ _id : false })
-
-const TextQuestionSchema = new Schema({
-	information: {type: String, required: true, default:null},
-},{ _id : false })
-
-const FileUploadSchema = new Schema({
 	file:{ 
 		rawFile :{
 			path:{type: String}
 		},
 		src:{type: String},
-		title: {type: String}
-	}
+		title:{type: String},
+		}
+},{ _id : false })
+
+const TextQuestionSchema = new Schema({
+	information: {type: String, required: true, default:null},
 },{ _id : false })
 
 const DuoBoolQuestionSchema = new Schema({
@@ -72,6 +69,7 @@ const ReportYearSchema = new Schema({
 	totalSDM:{type: Number, required: true},
 	year: {type: Date},
 	report: reportGroupSchema,
+	validated: {type: Boolean, default: false},
 })
 
 ReportYearSchema

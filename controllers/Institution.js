@@ -97,15 +97,6 @@ exports.create = [
 				address: req.body.address,
 				city: req.body.city,
 				province: req.body.province,
-				file: {
-					rawFile:{
-						path: req.body.file.rawFile.path
-					},
-					src: req.body.file.src,
-					// src: string64File,
-					title: req.body.file.title
-				},
-				// file: req.body.file.rawFile.data
 			})
 			debug('Institution : ');
 			debug(institution);
