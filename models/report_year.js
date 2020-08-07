@@ -5,9 +5,6 @@ const moment = require('moment')
 const BoolQuestionSchema = new Schema({
 	information: {type: Boolean, required: true, default: false},
 	file:{ 
-		rawFile :{
-			path:{type: String}
-		},
 		src:{type: String},
 		title:{type: String},
 		}

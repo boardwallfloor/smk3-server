@@ -223,62 +223,241 @@ exports.update = [
 					year: req.body.year,
 					report: {
 						question1: {
-							a: {information: req.body.report.question1.a.information},
-							b: {information: req.body.report.question1.b.information},
-							c: {information: req.body.report.question1.c.information},
+							a: {
+								information: req.body.report.question1.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.src,
+								},
+							},
+							b: {
+								information: req.body.report.question1.b.information,
+								file: {
+									title: req.body.report.question1.b.file.title,
+									src: req.body.report.question1.b.file.src,
+								},
+							},
+							c: {
+								information: req.body.report.question1.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question2: {
-							a: {information: req.body.report.question2.a.information},
-							b: {information: req.body.report.question2.b.information},
-							c: {information: req.body.report.question2.c.information},
+							a: {
+								information: req.body.report.question2.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question2.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							c: {
+								information: req.body.report.question2.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question3: {
-							a: {information: req.body.report.question3.a.information},
-							b: {information: req.body.report.question3.b.information},
-							c: {information: req.body.report.question3.c.information},
-							d: {information: req.body.report.question3.d.information},
+							a: {
+								information: req.body.report.question3.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question3.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							c: {
+								information: req.body.report.question3.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							d: {
+								information: req.body.report.question3.d.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question4: {
-							a: {information: req.body.report.question4.a.information},
-							b: {information: req.body.report.question4.b.information},
-							c: {information: req.body.report.question4.c.information},
+							a: {
+								information: req.body.report.question4.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question4.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							c: {
+								information: req.body.report.question4.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question5: {
-							a: {information: req.body.report.question5.a.information},
-							b: {information: req.body.report.question5.b.information},
-							c: {information: req.body.report.question5.c.information},
+							a: {
+								information: req.body.report.question5.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question5.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							c: {
+								information: req.body.report.question5.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question6: {
-							a: {information: req.body.report.question6.a.information},
-							b: {information: req.body.report.question6.b.information},
+							a: {
+								information: req.body.report.question6.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question6.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question7: {
-							a: {information: req.body.report.question7.a.information},
-							b: {information: req.body.report.question7.b.information},
-							c: {information: req.body.report.question7.c.information},
+							a: {
+								information: req.body.report.question7.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question7.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							c: {
+								information: req.body.report.question7.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question8: {
-							a: {information: req.body.report.question8.a.information},
-							b: {information: req.body.report.question8.b.information},
-							c: {information: req.body.report.question8.c.information},
+							a: {
+								information: req.body.report.question8.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							b: {
+								information: req.body.report.question8.b.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
+							c: {
+								information: req.body.report.question8.c.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 						},
 						question9: {
 							information: req.body.report.question9.information,
+							file: {
+								title: req.body.report.question,
+								src: req.body.report.question,
+							},
 						},
+
 						question10: {
-							a: {information: req.body.report.question10.a.information},
+							a: {
+								information: req.body.report.question10.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 							b: {
-									a: {information: req.body.report.question10.b.a.information},
+									a: {
+										information: req.body.report.question10.b.a.information,
+										file: {
+											title: req.body.report.question1.a.file.title,
+											src: req.body.report.question1.a.file.title,
+										}
+									},
 									b: {information: req.body.report.question10.b.b.information},
 									c: {information: req.body.report.question10.b.c.information},
 							},
 							c: {
-									a: {information: req.body.report.question10.c.a.information},
-									b: {information: req.body.report.question10.c.b.information},
+									a: {
+										information: req.body.report.question10.c.a.information,
+										file: {
+											title: req.body.report.question1.a.file.title,
+											src: req.body.report.question1.a.file.title,
+										}
+									},
+									b: {
+										information: req.body.report.question10.c.b.information,
+										file: {
+											title: req.body.report.question1.a.file.title,
+											src: req.body.report.question1.a.file.title,
+										}
+									}
 							}
 						},
 						question11: {
-							a: {information: req.body.report.question11.a.information},
+							a: {
+								information: req.body.report.question11.a.information,
+								file: {
+									title: req.body.report.question1.a.file.title,
+									src: req.body.report.question1.a.file.title,
+								}
+							},
 							b: {information: req.body.report.question11.b.information},
 						},
 					}
