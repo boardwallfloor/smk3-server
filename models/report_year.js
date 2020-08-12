@@ -3,15 +3,15 @@ const Schema = mongoose.Schema;
 const moment = require('moment')
 
 const BoolQuestionSchema = new Schema({
-	information: {type: Boolean, required: true, default: false},
+	information: {type: Boolean, default: false},
 	file:{ 
-		src:{type: String},
-		title:{type: String},
+		src:{type: String, default: undefined},
+		title:{type: String, default: undefined},
 		}
 },{ _id : false })
 
 const TextQuestionSchema = new Schema({
-	information: {type: String, required: true, default:null},
+	information: {type: String, default:null},
 },{ _id : false })
 
 const DuoBoolQuestionSchema = new Schema({
