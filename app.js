@@ -22,7 +22,8 @@ var notificationRoutes = require('./routes/notificationRoutes');
 
 
 //Mongo
-const MongoDB = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-l7zho.mongodb.net/test?retryWrites=true&w=majority`;
+const dbName = 'SMK3'
+const MongoDB = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-l7zho.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 mongoose.connect(MongoDB, {useUnifiedTopology : true, useNewUrlParser: true, useCreateIndex: true });
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));

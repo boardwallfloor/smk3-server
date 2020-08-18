@@ -117,11 +117,11 @@ const addEmptyFilePropertyToBody = (report) => {
 	const questionLengthTwo = ['question6','question11'] //also question 10.c
 	const questionLengthThree = ['question1','question2','question4','question5','question7','question8']
 	const questionLengthFour = ['question3']
-	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11',]
+	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
 
 	const addEmptyObjectToQuestions = () =>{
 		const reportObjectKey = Object.keys(report)
-		debug('Filled Input %O',reportObjectKey)
+		// debug('Filled Input %O',reportObjectKey)
 		for(let a = 0; a< questionList.length; a++){	
 			if(reportObjectKey.indexOf(questionList[a]) === -1){
 				report[questionList[a]] = {}
@@ -134,15 +134,17 @@ const addEmptyFilePropertyToBody = (report) => {
 	const addEmptyObjectToQuestionsChild = () => {
 		Object.keys(report).forEach( (questions, index) => {
 			if(questionLengthOne.indexOf(questions) != -1){
-				debug('Question category : Length One')
+				// debug('Question category : Length One')
 				if(questions === 'question9'){
 					report[questions].file = {}
 				}else{
 					for(let a = 0; a < pointListOne.length; a++){
 					// debug(`report.${questions}.${pointListOne[a]}`)
 					if(!report[questions][pointListOne[a]]){
-						// debug(pointListOne[a])
 						report[questions][pointListOne[a]] = {}
+					}
+					if(!report[questions][pointListOne[a]].file){
+						// debug(pointListOne[a])
 						report[questions][pointListOne[a]].file = {}
 						}
 				}
@@ -151,12 +153,14 @@ const addEmptyFilePropertyToBody = (report) => {
 				
 			//if exist && length = 2 and for loop
 			if(questionLengthTwo.indexOf(questions) != -1){
-				debug('Question category : Length Two')
+				// debug('Question category : Length Two')
 				for(let a = 0; a < pointListTwo.length; a++){
 					// debug(`report.${questions}.${pointListTwo[a]}`)
 					if(!report[questions][pointListTwo[a]]){
-						// debug(pointListTwo[a])
 						report[questions][pointListTwo[a]] = {}
+					}
+					if(!report[questions][pointListTwo[a]].file){
+						// debug(pointListTwo[a])
 						report[questions][pointListTwo[a]].file = {}
 						}
 				}
@@ -164,12 +168,14 @@ const addEmptyFilePropertyToBody = (report) => {
 				
 			//if exist && length = 3 and for loop
 			if(questionLengthThree.indexOf(questions) != -1){
-				debug('Question category : Length Three')
+				// debug('Question category : Length Three')
 				for(let a = 0; a < pointListThree.length; a++){
 					// debug(`report.${questions}.${pointListTwo[a]}`)
 					if(!report[questions][pointListThree[a]]){
-						// debug(pointListTwo[a])
 						report[questions][pointListThree[a]] = {}
+					}
+					if(!report[questions][pointListThree[a]].file){
+						// debug(pointListTwo[a])
 						report[questions][pointListThree[a]].file = {}
 						}
 				}
@@ -177,12 +183,14 @@ const addEmptyFilePropertyToBody = (report) => {
 
 			//if exist && length = 4 and for loop
 			if(questionLengthFour.indexOf(questions) != -1){
-				debug('Question category : Length Four')
+				// debug('Question category : Length Four')
 				for(let a = 0; a < pointListFour.length; a++){
 					// debug(`report.${questions}.${pointListFour[a]}`)
 					if(!report[questions][pointListFour[a]]){
-						// debug(pointListFour[a])
 						report[questions][pointListFour[a]] = {}
+					}
+					if(!report[questions][pointListFour[a]].file){
+						// debug(pointListFour[a])
 						report[questions][pointListFour[a]].file = {}
 						}
 				}
@@ -192,35 +200,37 @@ const addEmptyFilePropertyToBody = (report) => {
 
 			//if question10
 			if(questions === 'question10'){
-				debug('Question Category 10') 
+				// debug('Question Category 10') 
 				//Assign empty letter branch
 				const question10Key = Object.keys(report[questions])
-				debug(question10Key)
+				// debug(question10Key)
 				for(let a = 0; a < pointListThree.length; a++){
-					debug('Branch 1')
+					// debug('Branch 1')
 					// debug(`report.${questions}.${pointListFour[a]}`)
 					//Assigning Empty in reporty.question[_var] if not exist, also solve _a since a is first branch in object
 					if(question10Key.indexOf(pointListThree[a]) === -1){
-						debug('Empties made %o',a)
+						// debug('Empties made %o',a)
 						report[questions][pointListThree[a]] = {}
 					}
 					// debug(`report.${questions}.${pointListThree[a]}`)
 				}
-					debug(report[questions])
+					// debug(report[questions])
 				for(let a = 0; a< pointListThree.length; a++){
-					debug('Branch 2')
+					// debug('Branch 2')
 					if(pointListThree[a] === 'a'){
 						if(!report[questions][pointListThree[a]].file ){
 							report[questions][pointListThree[a]].file = {}
-							debug('a %O',report[questions][pointListThree[a]])
+							// debug('a %O',report[questions][pointListThree[a]])
 						}
 					}
 					if(pointListThree[a] === 'b'){
 						for(let i = 0; i < pointListThree.length; i++){
-							if(!report[questions][pointListThree[a]][pointListThree[i]] ){
+							if(!report[questions][pointListThree[a]][pointListThree[i]]){
 								report[questions][pointListThree[a]][pointListThree[i]] = {}
+							}
+							if(!report[questions][pointListThree[a]][pointListThree[i]].file){
 								report[questions][pointListThree[a]][pointListThree[i]].file = {}
-								debug('b %O',report[questions][pointListThree[a]])
+								// debug('b %O',report[questions][pointListThree[a]])
 							}
 						}
 					}
@@ -232,20 +242,21 @@ const addEmptyFilePropertyToBody = (report) => {
 							if(!report[questions][pointListThree[a]][pointListTwo[i]].file ){
 								report[questions][pointListThree[a]][pointListTwo[i]].file = {}
 							}
-							debug('c %O',report[questions][pointListThree[a]][pointListTwo[i]])
+							// debug('c %O',report[questions][pointListThree[a]][pointListTwo[i]])
 						}
 					}
 				}
 					
-			debug('Question 10 %O',report[questions])
+			// debug('Question 10 %O',report[questions])
 			}
 
 		})
 		// debug('Report : %O',report)
 	}
 	addEmptyObjectToQuestions()
+	debug('1 %O',report)
 	addEmptyObjectToQuestionsChild()
-	debug(report)
+	debug('2 %O',report)
 	return report;
 }
 
@@ -807,87 +818,33 @@ exports.delete = (req, res, next) => {
 	})
 }
 
-// const oneLetter = ['a']
-// 	const twoLetter = ['a','b']
-// 	const threeLetter = ['a','b','c']
-// 	const fourLetter = ['a','b','c','d'] 
-// 	const question = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
-// 	const questionA = ['question1','question2','question4','question5','question7','question8']
-// 	const questionB = ['question3']
-// 	const questionC = ['question6']
-// 	const questionD = ['question9']
-// 	const questionE = ['question10']
-// 	const questionF = ['question11']
+exports.send_data = (req, res, next) => {
 
-// 	const createdQuestion = Object.keys(body)
-// 	debug(createdQuestion)
-// 	const diffQuestion = question.filter((x) => !createdQuestion.includes(x))
-// 	debug(diffQuestion)
+	let excludedFileList = '';
+	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
+	const pointListFour = ['a','b','c','d']
 
-	
-	
-// 	for(let a = 0; a < question.length; a++){
-// 		if(questionA.indexOf(question[a]) != -1 ){
-// 			body[question[a]] = {}
-// 			for(let i = 0; i < threeLetter.length; i++){
-// 				body[question[a]][threeLetter[i]] = {}
-// 				body[question[a]][threeLetter[i]].file = {}
-// 			}
-// 		}
-// 		if(questionB.indexOf(question[a]) != -1){
-// 			body[question[a]] = {}
-// 			for(let i = 0; i < fourLetter.length; i++){
-// 				body[question[a]][fourLetter[i]] = {}
-// 				body[question[a]][fourLetter[i]].file = {}
-// 			}
-// 		}
-// 		if(questionC.indexOf(question[a]) != -1){
-// 			body[question[a]] = {}
-// 			for(let i = 0; i < twoLetter.length; i++){
-// 				body[question[a]][twoLetter[i]] = {}
-// 				body[question[a]][twoLetter[i]].file = {}
-// 			}
-// 		}
-// 		if(questionD.indexOf(question[a]) != -1){
-// 			body[question[a]] = {}
-// 			body[question[a]].file = {}
-// 		}
+	for(let a = 0; a < questionList.length; a++){
+		for(let i = 0; i < 4; i++){
+			if(questionList[i] === 'question10'){
+				for(let _b=0; _b < 4; _b++){
+					excludedFileList += '-report.' + questionList[a]+ointListFour[i]+ ointListFour[_b] + '.file'		
+				}
+			}else{
+			excludedFileList += '-report.' + questionList[a]+'.'+ pointListFour[i] + '.file'
+			}
+		if(a != questionList.length){
+			excludedFileList += ' '
+			}
+		}
+	}
 
-// 		if(questionE.indexOf(question[a]) != -1){
-// 			body[question[a]] = {}
-// 			for(let i = 0; i < threeLetter.length; i++){
-// 				if(threeLetter[i] === threeLetter[0]){
-// 					body[question[a]][threeLetter[i]] = {}
-// 					body[question[a]][threeLetter[i]].file = {}
-// 				}
-// 				//B
-// 				if(threeLetter[i] === threeLetter[1]){
-// 					body[question[a]][threeLetter[i]] = {}
-// 					for(let n = 0; n < threeLetter.length; n++){
-// 						body[question[a]][threeLetter[i]][threeLetter[n]] = {}
-// 						body[question[a]][threeLetter[i]][threeLetter[n]].file = {}
-// 					}
-// 				}
-// 				//C
-// 				if(threeLetter[i] === threeLetter[2]){
-// 					body[question[a]][threeLetter[i]] = {}
-// 					for(let n = 0; n < twoLetter.length; n++){
-// 						body[question[a]][threeLetter[i]][twoLetter[n]] = {}
-// 						body[question[a]][threeLetter[i]][twoLetter[n]].file = {}
-// 					}
-// 				}
-				
-				
-// 			}
-// 		}
-// 		if(questionF.indexOf(question[a]) != -1){
-// 			body[question[a]] = {}
-// 			for(let i = 0; i < twoLetter.length; i++){
-// 				body[question[a]][twoLetter[i]] = {}
-// 				body[question[a]][twoLetter[i]].file = {}
-// 				if(i == 1){
-// 					body[question[a]][twoLetter[i]] = {}
-// 				}
-// 			}
-// 		}
-// 	}
+	debug(excludedFileList)
+	Report.findById(req.params.id).select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
+		(err, results) =>{
+			if(err){return next(err);}
+			debug(results);
+			res.json(results);
+		}
+		)
+}

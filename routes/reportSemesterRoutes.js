@@ -9,8 +9,10 @@ router.use(reports_semester_controller.set_header)
 router.get('/', reports_semester_controller.show_all);
 router.post('/', reports_semester_controller.create);
 
-//Dashboard Only
+//Restful
 router.get('/db', reports_semester_controller.show_ten);
+router.get('/send/:id', reports_semester_controller.send_data);
+
 
 router.get('/:id', reports_semester_controller.show_one);
 router.put('/:id', reports_semester_controller.update);

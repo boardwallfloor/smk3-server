@@ -8,7 +8,7 @@ const UserSchema = new Schema({
 	first_name:{type: String, required: true},
 	full_name:{type: String, required: true},
 	email:{type: String, required: true},
-	phonenumber:{type: Number, required: true},
+	phonenumber:{type: String, required: true},
 	privilege:{type: String, required:true, enum:['Admin','Operator','Kepala Fasyankes','Dinas Kesehatan'], default: 'Operator'},
 	job_title:{type: String, required:true},
 	user_institution: {type: Schema.Types.ObjectId, ref:'Institution', required: true},

@@ -106,51 +106,18 @@ exports.show_ten = async (req, res, next) => {
 	})
 }
 
-const addEmptyFilePropertyToBody = (body) => {
-	const input = body
-	debug('Body')
-	debug(body)
-	if(input.question1.file == undefined){
-		input.question1.file = {}
-		// input.question1.file.src = '';
-		// input.question1.file.title = '';
+const addEmptyFilePropertyToBody = (input) => {
+	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
+	for(let _a = 0; _a < questionList.length; _a++){
+		if(!input[questionList[_a]]){
+			input[questionList[_a]] = {}
+		}
+		debug(`input.${questionList[_a]}`)
+		if(!input[questionList[_a]].file){
+			input[questionList[_a]].file = {}
+		}
 	}
-	if(input.question2.file == undefined){
-		input.question2.file = {}
-		// input.question2.file.src = '';
-		// input.question2.file.title = '';
-	}
-	if(input.question3.file == undefined){
-		input.question3.file = {}
-		// input.question3.file.src = '';
-		// input.question3.file.title = '';
-	}
-	if(input.question4.file == undefined){
-		input.question4.file = {}
-		// input.question4.file.src = '';
-		// input.question4.file.title = '';
-	}
-	if(input.question5.file == undefined){
-		input.question5.file = {}
-		// input.question5.file.src = '';
-		// input.question5.file.title = '';
-	}
-	if(input.question6.file == undefined){
-		input.question6.file = {}
-		// input.question6.file.src = '';
-		// input.question6.file.title = '';
-	}
-	if(input.question7.file == undefined){
-		input.question7.file = {}
-		// input.question7.file.src = '';
-		// input.question7.file.title = '';
-	}
-	if(input.question8.file == undefined){
-		input.question8.file = {}
-		// input.question8.file.src = '';
-		// input.question8.file.title = '';
-	}
-	debug('input %O',input)
+	debug(input)
 	return input;
 }
 
@@ -356,3 +323,21 @@ exports.download = (req, res, next) => {
 }
 
 
+exports.send_data = (req, res, next) => {
+	let excludedFileList = '';
+	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
+	for(let a = 0; a < questionList.length; a++){
+		excludedFileList += '-report.' + questionList[a] + '.file'
+		if(a != questionList.length){
+			excludedFileList += ' '
+		}
+	}
+	debug(excludedFileList)
+	Report.findById(req.params.id).select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
+		(err, results) =>{
+			if(err){return next(err);}
+			debug(results);
+			res.json(results);
+		}
+		)
+}
