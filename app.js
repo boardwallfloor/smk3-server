@@ -18,6 +18,7 @@ var institutionRoutes = require('./routes/institutionRoutes');
 var reportYearlyRoutes = require('./routes/reportYearRoutes');
 var reportSemesterlyRoutes = require('./routes/reportSemesterRoutes');
 var notificationRoutes = require('./routes/notificationRoutes');
+var chartRoutes = require('./routes/chartRoute');
 
 
 
@@ -64,6 +65,7 @@ app.use('/reportyear', reportYearlyRoutes);
 app.use('/reportsemester', reportSemesterlyRoutes);
 app.use('/institution', institutionRoutes);
 app.use('/notif', notificationRoutes);
+app.use('/chart', chartRoutes);
 
 console.log("Server running at port 9000");
 
