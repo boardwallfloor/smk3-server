@@ -15,18 +15,18 @@ exports.startSchedule = (
 	// req, res, next
 	) => {
 	debug('Before job instantiation');
-	// const date = new Date()
-	let date = results.remind_date;
-	debug('Input date %o' , date);
+	const date = new Date()
+	// let date = results.remind_date;
+	// debug('Input date %o' , date);
 	// date.setMinutes(date.getMinutes()+2);
-	// date.setSeconds(date.getSeconds()+2);
+	date.setSeconds(date.getSeconds()+2);
 	// date.setHours(date.getHours()+8);
 	debug('Processed date %o', date);
 	const job = new CronJob(date,async function() {
 		const d = new Date();
 		console.log('Specific date:', date, ', onTick at:', d);
 		debug('Results %O', results)
-		// await email_controller.sendEmail(results);
+		await email_controller.sendEmail(results);
 		// await sms.sendSmsReminder();
 		await notification_controller.setCompletionToTrue(results._id);
 	}, null, true, 'Asia/Jakarta');

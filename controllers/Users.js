@@ -100,12 +100,12 @@ exports.update = [
 	body('email').trim().isEmail(),
 	body('phonenumber').trim().isNumeric(),
 	body('privilege'),
-	body('jobtitle').trim().escape().isLength({min:1}),
+	body('job_title').trim().escape().isLength({min:1}),
 	body('nip').trim().escape().isLength({min:1}),
 	body('password').trim().isLength({min:1}),
 
 	async (req, res, next) => {
-		console.log("msg")
+		
 		const error = validationResult(req);
 
 		if(!error.isEmpty()){
@@ -121,7 +121,7 @@ exports.update = [
 					full_name: req.body.full_name,
 					phonenumber: req.body.phonenumber,
 					privilege: req.body.privilege,
-					jobtitle: req.body.jobtitle,
+					job_title: req.body.job_title,
 					user_institution: req.body.user_institution,
 					nip: req.body.nip,
 					password : hashedPassword,

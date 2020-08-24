@@ -1,8 +1,11 @@
 const async = require('async');
 const debug = require('debug')('reportsemester');
 const { body, validationResult } = require('express-validator');
+var fs = require('fs');
+const path = require('path')
 
 const Report = require('../models/report_semester')
+const exportFile = require('../config/generateExcel')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -323,7 +326,7 @@ exports.download = (req, res, next) => {
 }
 
 
-exports.send_data = (req, res, next) => {
+exports.send_data =  (req, res, next) => {
 	let excludedFileList = '';
 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
 	for(let a = 0; a < questionList.length; a++){
@@ -334,10 +337,28 @@ exports.send_data = (req, res, next) => {
 	}
 	debug(excludedFileList)
 	Report.findById(req.params.id).select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
-		(err, results) =>{
+		async (err, results) =>{
 			if(err){return next(err);}
 			debug(results);
-			res.json(results);
+			debug('Generating file')
+			const file = `${process.cwd()}/tmp/Excel.xlsx`;
+			if (fs.existsSync(file)){
+				// fs.unlinkSync(file)
+				debug('sad')
+			  }
+			// const filePath = await exportFile.generateExcelFile(results)
+			await exportFile.generateExcelFile(results, res)
+			// const fileName = 'Excel - '+fileDate+'.xlsx'
+			// const filePath = '/tmp/'
+			// debug(typeof fileName)
+			// debug('./'+filePath)
+			// res.download(`./tmp/Excel - ${fileDate}.xlsx`)
+			// res.download(filePath, fileName)
+			// res.download('./'+filePath)
+			// debug(file)
+			// res.download('./tmp/Excel.xlsx');
+
+
 		}
 		)
 }

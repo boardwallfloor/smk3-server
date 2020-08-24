@@ -25,7 +25,7 @@ var chartRoutes = require('./routes/chartRoute');
 //Mongo
 const dbName = 'SMK3'
 const MongoDB = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-l7zho.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-mongoose.connect(MongoDB, {useUnifiedTopology : true, useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(MongoDB, {useUnifiedTopology : true, useNewUrlParser: true, useCreateIndex: true ,useFindAndModify: false });
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 
@@ -48,7 +48,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 debug('test')
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/tmp')));
 app.use(session({
 	secret: `${process.env.SS_SECRET}`,
 	resave: false,
