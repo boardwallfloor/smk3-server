@@ -3,6 +3,7 @@ const debug = require('debug')('reportyear');
 const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_year')
+const exportFile = require('../config/generateExcel')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -78,7 +79,7 @@ exports.show_one = (req, res, next) => {
 	Report.findById(req.params.id).exec(
 		(err, results) =>{
 			if(err){return next(err);}
-			debug(results.year_formatted);
+			debug(results);
 			res.json(results);
 		}
 		)
@@ -113,10 +114,10 @@ const addEmptyFilePropertyToBody = (report) => {
 	const pointListThree = ['a','b','c']
 	const pointListFour = ['a','b','c','d']
 	
-	const questionLengthOne = ['question9'] //alson question10.a, question10.b, question11
-	const questionLengthTwo = ['question6','question11'] //also question 10.c
-	const questionLengthThree = ['question1','question2','question4','question5','question7','question8']
-	const questionLengthFour = ['question3']
+	const questionLengthOne = ['question9'] 
+	const questionLengthTwo = ['question6','question11']
+	const questionLengthThree = ['question1','question2','question4','question5','question7']
+	const questionLengthFour = ['question3','question8']
 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
 
 	const addEmptyObjectToQuestions = () =>{
@@ -469,6 +470,13 @@ exports.create = [
 							src: newFileInput.question8.c.file.src,
 						}
 					},
+					c: {
+						information: newFileInput.question8.d.information,
+						file: {
+							title: newFileInput.question8.d.file.title,
+							src: newFileInput.question8.d.file.src,
+						}
+					},
 				},
 				question9: {
 					information: newFileInput.question9.information,
@@ -552,253 +560,262 @@ exports.update = [
 			throw new Error();
 		}else{
 			
-				const report = new Report({
-					_id: req.params.id,
-					author: req.body.author,
-					area: req.body.area,
-					total: req.body.total,
-					year: req.body.year,
-					report: {
-						question1: {
-							a: {
-								information: req.body.report.question1.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.src,
-								},
-							},
-							b: {
-								information: req.body.report.question1.b.information,
-								file: {
-									title: req.body.report.question1.b.file.title,
-									src: req.body.report.question1.b.file.src,
-								},
-							},
-							c: {
-								information: req.body.report.question1.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
+		const report = new Report({
+			_id : req.params.id,
+			author: req.body.author,
+			area: req.body.area,
+			totalSDM: req.body.totalSDM,
+			institution: req.body.institution,
+			year: req.body.year,
+			validated: req.body.validated,
+			report: {
+				question1: {
+					a: {
+						information: newFileInput.question1.a.information,
+						file: {
+							title: newFileInput.question1.a.file.title,
+							src: newFileInput.question1.a.file.src,
 						},
-						question2: {
-							a: {
-								information: req.body.report.question2.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question2.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							c: {
-								information: req.body.report.question2.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
+					},
+					b: {
+						information: newFileInput.question1.b.information,
+						file: {
+							title: newFileInput.question1.b.file.title,
+							src: newFileInput.question1.b.file.src,
 						},
-						question3: {
-							a: {
-								information: req.body.report.question3.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question3.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							c: {
-								information: req.body.report.question3.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							d: {
-								information: req.body.report.question3.d.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-						},
-						question4: {
-							a: {
-								information: req.body.report.question4.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question4.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							c: {
-								information: req.body.report.question4.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-						},
-						question5: {
-							a: {
-								information: req.body.report.question5.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question5.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							c: {
-								information: req.body.report.question5.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-						},
-						question6: {
-							a: {
-								information: req.body.report.question6.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question6.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-						},
-						question7: {
-							a: {
-								information: req.body.report.question7.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question7.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							c: {
-								information: req.body.report.question7.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-						},
-						question8: {
-							a: {
-								information: req.body.report.question8.a.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							b: {
-								information: req.body.report.question8.b.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-							c: {
-								information: req.body.report.question8.c.information,
-								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
-								}
-							},
-						},
-						question9: {
-							information: req.body.report.question9.information,
-							file: {
-								title: req.body.report.question,
-								src: req.body.report.question,
-							},
-						},
+					},
+					c: {
+						information: newFileInput.question1.c.information,
+						file: {
+							title: newFileInput.question1.c.file.title,
+							src: newFileInput.question1.c.file.src,
+						}
+					},
+				},
+				question2: {
+					a: {
+						information: newFileInput.question2.a.information,
+						file: {
+							title: newFileInput.question2.a.file.title,
+							src: newFileInput.question2.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question2.b.information,
+						file: {
+							title: newFileInput.question2.b.file.title,
+							src: newFileInput.question2.b.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question2.c.information,
+						file: {
+							title: newFileInput.question2.c.file.title,
+							src: newFileInput.question2.c.file.src,
+						}
+					},
+				},
+				question3: {
+					a: {
+						information: newFileInput.question3.a.information,
+						file: {
+							title: newFileInput.question3.a.file.title,
+							src: newFileInput.question3.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question3.b.information,
+						file: {
+							title: newFileInput.question3.b.file.title,
+							src: newFileInput.question3.b.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question3.c.information,
+						file: {
+							title: newFileInput.question3.c.file.title,
+							src: newFileInput.question3.c.file.src,
+						}
+					},
+					d: {
+						information: newFileInput.question3.d.information,
+						file: {
+							title: newFileInput.question3.d.file.title,
+							src: newFileInput.question3.d.file.src,
+						}
+					},
+				},
+				question4: {
+					a: {
+						information: newFileInput.question4.a.information,
+						file: {
+							title: newFileInput.question4.a.file.title,
+							src: newFileInput.question4.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question4.b.information,
+						file: {
+							title: newFileInput.question4.b.file.title,
+							src: newFileInput.question4.b.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question4.c.information,
+						file: {
+							title: newFileInput.question4.c.file.title,
+							src: newFileInput.question4.c.file.src,
+						}
+					},
+				},
+				question5: {
+					a: {
+						information: newFileInput.question5.a.information,
+						file: {
+							title: newFileInput.question5.a.file.title,
+							src: newFileInput.question5.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question5.b.information,
+						file: {
+							title: newFileInput.question5.b.file.title,
+							src: newFileInput.question5.b.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question5.c.information,
+						file: {
+							title: newFileInput.question5.c.file.title,
+							src: newFileInput.question5.c.file.src,
+						}
+					},
+				},
+				question6: {
+					a: {
+						information: newFileInput.question6.a.information,
+						file: {
+							title: newFileInput.question6.a.file.title,
+							src: newFileInput.question6.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question6.b.information,
+						file: {
+							title: newFileInput.question6.b.file.title,
+							src: newFileInput.question6.b.file.src,
+						}
+					},
+				},
+				question7: {
+					a: {
+						information: newFileInput.question7.a.information,
+						file: {
+							title: newFileInput.question8.a.file.title,
+							src: newFileInput.question8.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question7.b.information,
+						file: {
+							title: newFileInput.question8.b.file.title,
+							src: newFileInput.question8.b.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question7.c.information,
+						file: {
+							title: newFileInput.question8.c.file.title,
+							src: newFileInput.question8.c.file.src,
+						}
+					},
+				},
+				question8: {
+					a: {
+						information: newFileInput.question8.a.information,
+						file: {
+							title: newFileInput.question8.a.file.title,
+							src: newFileInput.question8.a.file.src,
+						}
+					},
+					b: {
+						information: newFileInput.question8.b.information,
+						file: {
+							title: newFileInput.question8.b.file.title,
+							src: newFileInput.question8.b.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question8.c.information,
+						file: {
+							title: newFileInput.question8.c.file.title,
+							src: newFileInput.question8.c.file.src,
+						}
+					},
+					c: {
+						information: newFileInput.question8.d.information,
+						file: {
+							title: newFileInput.question8.d.file.title,
+							src: newFileInput.question8.d.file.src,
+						}
+					},
+				},
+				question9: {
+					information: newFileInput.question9.information,
+					file: {
+						title: newFileInput.question9.file.title,
+						src: newFileInput.question9.file.src,
+					},
+				},
 
-						question10: {
+				question10: {
+					a: {
+						information: newFileInput.question10.a.information,
+						file: {
+							title: newFileInput.question10.a.file.title,
+							src: newFileInput.question10.a.file.src,
+						}
+					},
+					b: {
 							a: {
-								information: req.body.report.question10.a.information,
+								information: newFileInput.question10.b.a.information,
 								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
+									title: newFileInput.question10.b.a.file.title,
+									src: newFileInput.question10.b.a.file.src,
+								}
+							},
+							b: {information: newFileInput.question10.b.b.information},
+							c: {information: newFileInput.question10.b.c.information},
+					},
+					c: {
+							a: {
+								information: newFileInput.question10.c.a.information,
+								file: {
+									title: newFileInput.question10.c.a.file.title,
+									src: newFileInput.question10.c.a.file.src,
 								}
 							},
 							b: {
-									a: {
-										information: req.body.report.question10.b.a.information,
-										file: {
-											title: req.body.report.question1.a.file.title,
-											src: req.body.report.question1.a.file.title,
-										}
-									},
-									b: {information: req.body.report.question10.b.b.information},
-									c: {information: req.body.report.question10.b.c.information},
-							},
-							c: {
-									a: {
-										information: req.body.report.question10.c.a.information,
-										file: {
-											title: req.body.report.question1.a.file.title,
-											src: req.body.report.question1.a.file.title,
-										}
-									},
-									b: {
-										information: req.body.report.question10.c.b.information,
-										file: {
-											title: req.body.report.question1.a.file.title,
-											src: req.body.report.question1.a.file.title,
-										}
-									}
-							}
-						},
-						question11: {
-							a: {
-								information: req.body.report.question11.a.information,
+								information: newFileInput.question10.c.b.information,
 								file: {
-									title: req.body.report.question1.a.file.title,
-									src: req.body.report.question1.a.file.title,
+									title: newFileInput.question10.c.b.file.title,
+									src: newFileInput.question10.c.b.file.src,
 								}
-							},
-							b: {information: req.body.report.question11.b.information},
-						},
+							}
 					}
-				})
+				},
+				question11: {
+					a: {
+						information: newFileInput.question11.a.information,
+						file: {
+							title: newFileInput.question11.a.file.title,
+							src: newFileInput.question11.a.file.src,
+						}
+					},
+					b: {information: newFileInput.question11.b.information},
+				},
+			}
+		})
 				debug(report)
 				Report.findByIdAndUpdate(req.params.id, report, (err, results) =>{
 					if(err){return (next(err));}
@@ -828,7 +845,7 @@ exports.send_data = (req, res, next) => {
 		for(let i = 0; i < 4; i++){
 			if(questionList[i] === 'question10'){
 				for(let _b=0; _b < 4; _b++){
-					excludedFileList += '-report.' + questionList[a]+ointListFour[i]+ ointListFour[_b] + '.file'		
+					excludedFileList += '-report.' + questionList[a]+pointListFour[i]+ pointListFour[_b] + '.file'		
 				}
 			}else{
 			excludedFileList += '-report.' + questionList[a]+'.'+ pointListFour[i] + '.file'
@@ -841,10 +858,11 @@ exports.send_data = (req, res, next) => {
 
 	debug(excludedFileList)
 	Report.findById(req.params.id).select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
-		(err, results) =>{
+		async (err, results) =>{
 			if(err){return next(err);}
 			debug(results);
-			res.json(results);
+			// res.json(results);
+			await exportFile.reportYearToExcel(results, res)
 		}
 		)
 }

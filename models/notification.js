@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const NotificationSchema = new Schema({
 	
-	complete_status: {type: Boolean, default:false},
+	notification_status: {type: String, enum:['Belum Dikirim','Peringatan Dikirim','Laporan Dibuat'], default:'Belum Dikirim'},
 	remindee: {type: Schema.Types.ObjectId, ref:'User', required: true},
 	remind_date: {type: Date, required: true},
 	report_type: {type: String, required:true, enum:['yearly','semesterly']}

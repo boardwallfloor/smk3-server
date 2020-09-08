@@ -1,8 +1,6 @@
 const async = require('async');
 const debug = require('debug')('reportsemester');
 const { body, validationResult } = require('express-validator');
-var fs = require('fs');
-const path = require('path')
 
 const Report = require('../models/report_semester')
 const exportFile = require('../config/generateExcel')
@@ -29,10 +27,10 @@ const handleSort = (sort) => {
 }
 
 exports.set_header = (req, res, next) =>{
-		Report.countDocuments().exec((err, results) => {
-		res.set('Content-Range', results);
-		next();
-		})
+	Report.countDocuments().exec((err, results) => {
+	res.set('Content-Range', results);
+	next();
+	})
 	}
 
 
@@ -336,29 +334,13 @@ exports.send_data =  (req, res, next) => {
 		}
 	}
 	debug(excludedFileList)
+	debug(req.params)
 	Report.findById(req.params.id).select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
 		async (err, results) =>{
 			if(err){return next(err);}
 			debug(results);
 			debug('Generating file')
-			const file = `${process.cwd()}/tmp/Excel.xlsx`;
-			if (fs.existsSync(file)){
-				// fs.unlinkSync(file)
-				debug('sad')
-			  }
-			// const filePath = await exportFile.generateExcelFile(results)
-			await exportFile.generateExcelFile(results, res)
-			// const fileName = 'Excel - '+fileDate+'.xlsx'
-			// const filePath = '/tmp/'
-			// debug(typeof fileName)
-			// debug('./'+filePath)
-			// res.download(`./tmp/Excel - ${fileDate}.xlsx`)
-			// res.download(filePath, fileName)
-			// res.download('./'+filePath)
-			// debug(file)
-			// res.download('./tmp/Excel.xlsx');
-
-
+			await exportFile.reportSemesterToExcel(results, res)
 		}
 		)
 }
