@@ -38,44 +38,25 @@ const dateToSemester = (date) => {
 	return dateToMonthIndex < 6 ? 'Ganjil' : 'Genap'
 }
 
-const findReportYear = (inputDate, inputRemindee) => {
+const findReportYearQuery = (inputDate, inputRemindee) => {
 	return reportYear.findOne({ year: { $gte: `${inputDate}-01-01`, $lte: `${inputDate}-12-30` }, author: inputRemindee })
-		// .exec(
-		// (err,results) => {
-		// 	// if(err){return next(err)}
-		// 	return results;
-		// })
 }
 
-const checkReportAlreadyExist = async (inputDate, inputRemindee, reportType) => {
-	debug(inputDate.getFullYear())
-	debug(inputRemindee)
-	debug(reportType)
-	let existStatus = '';
-	if(reportType === 'yearly'){
-		// reportYear.find({ year: { $gte: `${inputDate.getFullYear()}-01-01`, $lte: `${inputDate.getFullYear()}-12-30` }, author: inputRemindee }).exec((err, results) => {
-		// 	if(err){return next(err)}
-		// 	// debug('Result from check %O',results)
-		// 	results ? existStatus='true' : existStatus='false'
-		// 	return existStatus
-		// })
-		const status = await findReportYear(inputDate, inputRemindee)
-		debug(status)
-		if(status){
-			return true;
-		}else {
-			return false
-		}
-		// return status
+const findReportSemesterQuery = (inputYear, inputMonth, inputRemindee) => {
+	let inputMonthMin, inputMonthMax
+	if(inputMonth < 7){
+		inputMonthMin = 1;
+		inputMonthMax = 6;
+	}else if (inputMonth >= 7){
+		inputMonthMin = 7
+		inputMonthMax = 12
 	}
-	if(reportType === 'semesterly'){
-		reportSemester.find({ year: { $gte: `${inputDate.getFullYear()}-01-01`, $lte: `${inputDate.getFullYear()}-12-30` }, author: inputRemindee }).exec((err, results) => {
-			// debug('Result from check %O',results)
-			results ? 'true' : 'false'
-		})
-	}
-	
+	debug('inputMonthMax :  %O',inputMonthMax)
+	debug('inputMonthMin :  %O', inputMonthMin)
+	debug('inputYear :  %O', inputYear)
+	return reportSemester.findOne({ date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, author: inputRemindee })
 }
+
 
 exports.set_header = (req, res, next) =>{
 	Notification.countDocuments().exec((err, results) => {
@@ -150,13 +131,10 @@ exports.show_ten = async (req, res, next) => {
 		},
 		count: (callback) => {
 			Notification.countDocuments(filter).exec(callback)
-		},
-		test: (callback) => {
-			reportYear.find({ year: { $gte: '2020-01-01', $lte: '2020-12-30' }, author: '5f3c27cbbff2e5e0e8182ee1' }).exec(callback)
 		}
 	},(err, results) => {
 		if(err){return next(err);}
-		debug(results.test)
+		debug(results)
 		res.json(results);
 	})
 }
@@ -174,40 +152,29 @@ exports.create = [
 			throw new Error();
 		}else{
 			let isReportExist = false;
+			const inputDateYear = req.body.remind_date.getFullYear()
+			const inputDateMonth = req.body.remind_date.getMonth()
+			const inputRemindee = req.body.remindee
 			if(req.body.report_type === 'yearly'){
-				const inputDate = req.body.remind_date.getFullYear()
-				const inputRemindee = req.body.remindee
-				// await reportYear.find({ year: { $gte: `${inputDate}-01-01`, $lte: `${inputDate}-12-30` }, author: inputRemindee }).
-				// exec( async (err, results) => {
-				// 	debug(results)
-				// 	if(results.length){
-				// 		isReportExist = true
-				// 		debug('true')
-				// 		}
-				// 	}
-				// 	)
-				const result = await findReportYear(inputDate, inputRemindee)
-				debug(result)
+				const result = await findReportYearQuery(inputDateYear, inputRemindee)
+				debug('Data query result %O',result)
 				if(result){
 					isReportExist = true
 				}
-				// exec( (err,results) => {
-				// 	debug('ceck')
-				// 	if(err){return next(err)}
-				// 	if(results){
-				// 		return isReportExist = true;
-				// 		// debug('Found result %O',results)
-				// 		// debug('Exist status %O',isReportExist)
-				// 		// res.send('Exist')
-						
-				// 	}
-				// })
+			}
+			if(req.body.report_type === 'semesterly'){
+				const result = await findReportSemesterQuery( inputDateYear, inputDateMonth, inputRemindee)
+				debug('Data query result %O',result)
+				if(result){
+					isReportExist = true
+				}
 			}
 			debug('Exist status %O',isReportExist)
 			if(isReportExist){
 				res.json('Data already exist')
 			}
 			if(!isReportExist){
+				debug('Report not found, creating reminder')
 				const notification = new Notification({
 					notification_status: req.body.notification_status,
 					remindee: req.body.remindee,
@@ -274,16 +241,10 @@ exports.setCompletionToTrue = (req, res, next) => {
 		}
 	
 
-
-
 exports.delete = (req, res, next) => {
 	Notification.findByIdAndRemove(req.params.id).exec((err,results) =>{
 		if(err){return next(err);}
 		// res.status(200).send("Sucessfully deleted Notification");
 		res.json(results);
 	})
-}
-
-exports.test = () => {
-	notification
 }
