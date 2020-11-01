@@ -171,7 +171,9 @@ exports.create = [
 			}
 			debug('Exist status %O',isReportExist)
 			if(isReportExist){
-				res.json('Data already exist')
+				res.status(400).json({
+				   message: 'Data already exist',
+				});
 			}
 			if(!isReportExist){
 				debug('Report not found, creating reminder')

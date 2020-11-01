@@ -3,6 +3,7 @@ const debug = require('debug')('reportsemester');
 const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_semester')
+const Notification = require('../models/notification');
 const exportFile = require('../config/generateExcel')
 
 const handleFilter = (filter) => {
@@ -26,12 +27,36 @@ const handleSort = (sort) => {
 	}
 }
 
-exports.set_header = (req, res, next) =>{
+const checkIfReminderExist = (author, date) => {
+	debug(date)
+	let inputMonthMin, inputMonthMax
+	
+	let inputDate = new Date(date)
+	debug(inputDate)
+	let inputMonth = inputDate.getMonth()
+	let inputYear = inputDate.getFullYear()
+
+	if(inputMonth < 7){
+		inputMonthMin = 1
+		inputMonthMax = 6
+	}else if (inputMonth >= 7){
+		inputMonthMin = 7
+		inputMonthMax = 12
+	}
+
+	debug('inputMonthMax :  %O',inputMonthMax)
+	debug('inputMonthMin :  %O', inputMonthMin)
+	debug('inputYear :  %O', inputYear)
+	// debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-${inputMonthMin}-01, $lte: ${inputYear}-${inputMonthMax}-31 }, author: ${author}, report_type : 'semesterly' })`)
+	return Notification.findOne({ remind_date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, author: author, report_type : 'semesterly' })
+}
+
+exports.set_header = (req, res, next) => {
 	Report.countDocuments().exec((err, results) => {
 	res.set('Content-Range', results);
 	next();
 	})
-	}
+}
 
 
 exports.show_all = async (req, res, next) => {
@@ -113,12 +138,12 @@ const addEmptyFilePropertyToBody = (input) => {
 		if(!input[questionList[_a]]){
 			input[questionList[_a]] = {}
 		}
-		debug(`input.${questionList[_a]}`)
+		// debug(`input.${questionList[_a]}`)
 		if(!input[questionList[_a]].file){
 			input[questionList[_a]].file = {}
 		}
 	}
-	debug(input)
+	// debug(input)
 	return input;
 }
 
@@ -210,10 +235,19 @@ exports.create = [
 				}
 			})
 				// debug(report)
-				Report.create(report, (err, results) =>{
+				Report.create(report, async 											  (err, results) =>{
 					if(err){return next(err);}
-					debug('results')
-					debug(results)
+					const reminderStatusQuery = await checkIfReminderExist(req.body.author, req.body.date)
+					debug(reminderStatusQuery)
+					if(reminderStatusQuery){
+						debug(eminderStatusQuery.notification_status )
+						reminderStatusQuery.notification_status = 'Laporan Dibuat'
+						debug('Reminder status changed')
+						await reminderStatusQuery.save()
+					}
+					// debug('Result : ')
+					debug('Data created')
+					// debug(results)
 					res.json(results);
 				})
 		}

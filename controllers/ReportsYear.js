@@ -3,6 +3,7 @@ const debug = require('debug')('reportyear');
 const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_year')
+const Notification = require('../models/notification');
 const exportFile = require('../config/generateExcel')
 
 const handleFilter = (filter) => {
@@ -26,12 +27,16 @@ const handleSort = (sort) => {
 	}
 }
 
+const checkIfReminderExist = () => {
+	
+}
+
 exports.set_header = (req, res, next) =>{
-		Report.countDocuments().exec((err, results) => {
-		res.set('Content-Range', results);
-		next();
-		})
-	}
+	Report.countDocuments().exec((err, results) => {
+	res.set('Content-Range', results);
+	next();
+	})
+}
 
 
 exports.show_all = async (req, res, next) => {
