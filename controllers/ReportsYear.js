@@ -31,7 +31,7 @@ const checkIfReminderExist = (author, date) => {
 	debug(date)
 	let inputDate = new Date(date)
 	debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-00-01, $lte: ${inputYear}-11-31 }, remindee: ${author}, report_type : 'semesterly' })`)
-	return Notification.findOne({ remind_date: { $gte: `${inputYear}-00-01`, $lte: `${inputYear}-11-31 }`, remindee: `${author}`, report_type : 'yearly' })
+	return Notification.findOne({ remind_date: { $gte: `${inputYear}-00-01`, $lte: `${inputYear}-11-31 }`}, remindee: author, report_type : 'yearly' })
 	
 }
 
