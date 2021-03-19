@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const questionSchema = new Schema({
-	total: {type: Number, required: true},
+	total: {type: Number, required: true, default:0},
 	file: {
 		src:{type: String},
 		title:{type: String},

@@ -32,7 +32,7 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 //Middleware
 var app = express();
 const corsOptions = {
-  origin: ['http://localhost:3000','http://192.168.100.82:3000'],
+  origin: ['http://localhost:3000','http://192.168.2.8:3000'],
   credentials: true,
   exposedHeaders: ['Content-Range'],
 }
@@ -68,6 +68,5 @@ app.use('/notif', notificationRoutes);
 app.use('/chart', chartRoutes);
 
 console.log("Server running at port 9000");
-
 
 module.exports = app;

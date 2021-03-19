@@ -27,7 +27,11 @@ const handleSort = (sort) => {
 	}
 }
 
-const checkIfReminderExist = () => {
+const checkIfReminderExist = (author, date) => {
+	debug(date)
+	let inputDate = new Date(date)
+	debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-00-01, $lte: ${inputYear}-11-31 }, remindee: ${author}, report_type : 'semesterly' })`)
+	return Notification.findOne({ remind_date: { $gte: `${inputYear}-00-01`, $lte: `${inputYear}-11-31 }`, remindee: `${author}`, report_type : 'yearly' })
 	
 }
 
@@ -540,11 +544,19 @@ exports.create = [
 			}
 		})
 				debug(report)
-				Report.create(report, (err, results) =>{
+				Report.create(report, async (err, results) =>{
 					if(err){return next(err);}
 					// debug(results)
 					// res.send("Successfully created per Year Report");
-					res.send(results);
+					const reminderStatusQuery = await checkIfReminderExist(req.body.author, req.body.year)
+					debug(reminderStatusQuery)
+					if(reminderStatusQuery){
+						debug(reminderStatusQuery.notification_status )
+						reminderStatusQuery.notification_status = 'Laporan Dibuat'
+						debug('Reminder status changed')
+						await reminderStatusQuery.save()
+					}
+					res.json(results);
 				})
 		}
 	}

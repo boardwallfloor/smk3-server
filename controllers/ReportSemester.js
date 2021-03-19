@@ -37,18 +37,18 @@ const checkIfReminderExist = (author, date) => {
 	let inputYear = inputDate.getFullYear()
 
 	if(inputMonth < 7){
-		inputMonthMin = 1
+		inputMonthMin = 0
 		inputMonthMax = 6
 	}else if (inputMonth >= 7){
 		inputMonthMin = 7
-		inputMonthMax = 12
+		inputMonthMax = 11
 	}
 
 	debug('inputMonthMax :  %O',inputMonthMax)
 	debug('inputMonthMin :  %O', inputMonthMin)
 	debug('inputYear :  %O', inputYear)
-	// debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-${inputMonthMin}-01, $lte: ${inputYear}-${inputMonthMax}-31 }, author: ${author}, report_type : 'semesterly' })`)
-	return Notification.findOne({ remind_date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, author: author, report_type : 'semesterly' })
+	debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-${inputMonthMin}-01, $lte: ${inputYear}-${inputMonthMax}-31 }, remindee: ${author}, report_type : 'semesterly' })`)
+	return Notification.findOne({ remind_date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, remindee: author, report_type : 'semesterly' })
 }
 
 exports.set_header = (req, res, next) => {
@@ -234,13 +234,13 @@ exports.create = [
 					},
 				}
 			})
-				// debug(report)
-				Report.create(report, async 											  (err, results) =>{
+				debug(req.body.year)
+				Report.create(report, async (err, results) =>{
 					if(err){return next(err);}
-					const reminderStatusQuery = await checkIfReminderExist(req.body.author, req.body.date)
+					const reminderStatusQuery = await checkIfReminderExist(req.body.author, req.body.year)
 					debug(reminderStatusQuery)
 					if(reminderStatusQuery){
-						debug(eminderStatusQuery.notification_status )
+						debug(reminderStatusQuery.notification_status )
 						reminderStatusQuery.notification_status = 'Laporan Dibuat'
 						debug('Reminder status changed')
 						await reminderStatusQuery.save()
@@ -377,4 +377,11 @@ exports.send_data =  (req, res, next) => {
 			await exportFile.reportSemesterToExcel(results, res)
 		}
 		)
+}
+
+exports.test = (req,res,next) => {
+	Notification.findOne({ remind_date: { $gte: '2023-7-01', $lte: '2023-12-31' }, remindee: '5f3c27cbbff2e5e0e8182ee1', report_type : 'semesterly' }).exec( (err, results) => {
+		debug(results)
+		res.json(results)
+	})
 }
