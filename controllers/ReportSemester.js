@@ -28,20 +28,20 @@ const handleSort = (sort) => {
 }
 
 const checkIfReminderExist = (author, date) => {
-	debug(date)
+	debug('date in fCheckreminder : %O', date)
 	let inputMonthMin, inputMonthMax
 	
 	let inputDate = new Date(date)
-	debug(inputDate)
+	debug('inputDate : %O',inputDate)
 	let inputMonth = inputDate.getMonth()
 	let inputYear = inputDate.getFullYear()
 
 	if(inputMonth < 7){
-		inputMonthMin = 0
+		inputMonthMin = 1
 		inputMonthMax = 6
 	}else if (inputMonth >= 7){
 		inputMonthMin = 7
-		inputMonthMax = 11
+		inputMonthMax = 12
 	}
 
 	debug('inputMonthMax :  %O',inputMonthMax)
@@ -162,6 +162,7 @@ exports.create = [
 			const newFileInput = await addEmptyFilePropertyToBody(req.body.report)
 			// const newFileInput = req.body.report
 			debug('New File Input : %O',newFileInput)
+			debug('Date: %O',req.body.date)
 			const report = new Report({
 				author: req.body.author,
 				date: req.body.date,
@@ -234,10 +235,9 @@ exports.create = [
 					},
 				}
 			})
-				debug(req.body.year)
 				Report.create(report, async (err, results) =>{
 					if(err){return next(err);}
-					const reminderStatusQuery = await checkIfReminderExist(req.body.author, req.body.year)
+					const reminderStatusQuery = await checkIfReminderExist(req.body.author, req.body.date)
 					debug(reminderStatusQuery)
 					if(reminderStatusQuery){
 						debug(reminderStatusQuery.notification_status )
@@ -245,9 +245,9 @@ exports.create = [
 						debug('Reminder status changed')
 						await reminderStatusQuery.save()
 					}
-					// debug('Result : ')
 					debug('Data created')
-					// debug(results)
+					debug('Result : ')
+					debug(results)
 					res.json(results);
 				})
 		}
@@ -256,10 +256,10 @@ exports.create = [
 
 exports.update = [
 	body('author').trim().isLength({min:1}),
-	body('month').isLength({min:1}),
 
 	async (req, res, next) => {
 		const error = validationResult(req)
+		debug('test')
 		debug(error)
 		if(!error.isEmpty()){
 			throw new Error("Error : ");

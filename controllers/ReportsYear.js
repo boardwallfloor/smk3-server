@@ -29,10 +29,26 @@ const handleSort = (sort) => {
 
 const checkIfReminderExist = (author, date) => {
 	debug(date)
-	let inputDate = new Date(date)
-	debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-00-01, $lte: ${inputYear}-11-31 }, remindee: ${author}, report_type : 'semesterly' })`)
-	return Notification.findOne({ remind_date: { $gte: `${inputYear}-00-01`, $lte: `${inputYear}-11-31 }`}, remindee: author, report_type : 'yearly' })
+	let inputMonthMin, inputMonthMax
 	
+	let inputDate = new Date(date)
+	debug(inputDate)
+	let inputMonth = inputDate.getMonth()
+	let inputYear = inputDate.getFullYear()
+
+	if(inputMonth < 7){
+		inputMonthMin = 1
+		inputMonthMax = 6
+	}else if (inputMonth >= 7){
+		inputMonthMin = 7
+		inputMonthMax = 12
+	}
+
+	debug('inputMonthMax :  %O',inputMonthMax)
+	debug('inputMonthMin :  %O', inputMonthMin)
+	debug('inputYear :  %O', inputYear)
+	debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-${inputMonthMin}-01, $lte: ${inputYear}-${inputMonthMax}-31 }, remindee: ${author}, report_type : 'yearly' })`)
+	return Notification.findOne({ remind_date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, remindee: author, report_type : 'yearly' })
 }
 
 exports.set_header = (req, res, next) =>{
