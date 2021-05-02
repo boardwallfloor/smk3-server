@@ -11,11 +11,12 @@ router.get('/', reports_semester_controller.show_all);
 router.post('/', reports_semester_controller.create);
 
 //TEST
-router.get('/test', reports_semester_controller.test);
+// router.get('/test', reports_semester_controller.test);
+// router.get('/xcl', reports_semester_controller.send_data_excel);
+
 //Restful
 router.get('/db', reports_semester_controller.show_ten);
 router.get('/send/:id', reports_semester_controller.send_data);
-// router.get('/xcl', reports_semester_controller.send_data_excel);
 
 
 router.get('/:id', reports_semester_controller.show_one);

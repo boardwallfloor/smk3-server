@@ -3,6 +3,7 @@ var router = express.Router();
 const institution_controller = require('../controllers/Institution');
 
 router.use(institution_controller.set_header)
+router.get('/db', institution_controller.show_ten);
 router.get('/', institution_controller.show_all);
 router.post('/', institution_controller.create);
 router.get('/:id', institution_controller.show_one);

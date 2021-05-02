@@ -75,6 +75,27 @@ exports.show_one =  (req, res, next) => {
 		)
 }
 
+exports.show_ten = async(req, res, next) => {
+	let filter={};
+	debug(req.query)
+
+	if(req.query.filter != undefined){
+		filter = await handleFilter(req.query.filter);
+	}			
+	async.parallel({
+		data: (callback) => {
+			Institution.find(filter).limit(10).exec(callback)
+		},
+		count: (callback) => {
+			Institution.countDocuments(filter).exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		debug(results)
+		res.json(results);
+	})	
+}
+
 exports.create = [
 	body('name').trim().isLength({min:1}),
 	body('address').trim().escape().isLength({min:1}),

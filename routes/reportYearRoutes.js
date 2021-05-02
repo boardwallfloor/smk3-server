@@ -5,12 +5,13 @@ const reports_year_controller = require('../controllers/ReportsYear');
 const email_controller = require('../controllers/Emails');
 
 router.use(reports_year_controller.set_header)
-router.get('/', reports_year_controller.show_all);
-router.post('/', reports_year_controller.create);
-
 //Restful
 router.get('/db', reports_year_controller.show_ten);
 router.get('/send/:id', reports_year_controller.send_data);
+
+router.get('/', reports_year_controller.show_all);
+router.post('/', reports_year_controller.create);
+
 
 router.get('/:id', reports_year_controller.show_one);
 router.put('/:id', reports_year_controller.update);

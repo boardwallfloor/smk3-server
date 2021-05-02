@@ -17,31 +17,30 @@ exports.set_header = (req, res, next) =>{
 		})
 	}
 
-exports.show_all = async (req, res, next) => {
-
-	debug("Show all parameter length : "+Object.keys(req.query).length)
-
-	const handleRange = () => {
-		const range = JSON.parse(req.query.range)
-		const [start, end] = range;
+const handleRange = (range) => {
+		const rangeJson = JSON.parse(range)
+		const [start, end] = rangeJson;
 		const limitation = end-start+1;
 		return [start,limitation];
 	}
 
-	const handleSort = () => {
-		const sort = JSON.parse(req.query.sort)
-		const [resource, order] = sort;
-		const orderLowerCase = order.toLowerCase()
-		return sortOn={
-			[resource]: [orderLowerCase]
-		}
+const handleSort = (sort) => {
+	const sortJson = JSON.parse(sort)
+	const [resource, order] = sortJson;
+	const orderLowerCase = order.toLowerCase()
+	return sortOn={
+		[resource]: [orderLowerCase]
 	}
+}
 
-	const handleFilter = () => {
-		const filter = JSON.parse(req.query.filter)
-		return filter;
-	}
+const handleFilter = (filter) => {
+	const filterJson = JSON.parse(filter)
+	return filterJson;
+}
 
+exports.show_all = async (req, res, next) => {
+
+	debug("Show all parameter length : "+Object.keys(req.query).length)
 
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
@@ -50,7 +49,7 @@ exports.show_all = async (req, res, next) => {
 			if(err){return next(err);}
 			// debug(results);
 			res.json(results);
-		}
+			}
 		)	
 
 	}else{
@@ -61,16 +60,16 @@ exports.show_all = async (req, res, next) => {
 		let sort;
 
 		if(req.query.range != undefined){
-			const range  = await handleRange();
+			const range  = await handleRange(req.query.range);
 			[start, limitation] = range;
 		}
 
 		if(req.query.filter != undefined){
-			filter = await handleFilter();
+			filter = await handleFilter(req.query.filter);
 		}
 
 		if(req.query.sort != undefined) {
-			sort = handleSort();
+			sort = handleSort(req.query.sort);
 		}
 		
 		User.find(filter).sort(sort).skip(start).limit(limitation).exec(
@@ -90,7 +89,27 @@ exports.show_one = (req, res, next) => {
 			res.json(results);
 		})
 
+}
 
+exports.show_ten = async(req, res, next) => {
+	let filter={};
+	debug(req.query)
+
+	if(req.query.filter != undefined){
+		filter = await handleFilter(req.query.filter);
+	}			
+	async.parallel({
+		data: (callback) => {
+			User.find(filter).limit(10).exec(callback)
+		},
+		count: (callback) => {
+			User.countDocuments(filter).exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		debug(results)
+		res.json(results);
+	})	
 }
 
 exports.update = [
@@ -254,8 +273,4 @@ exports.checkAuth = (req, res, next) => {
 		if(err){return new Error (err)};
 		res.send(user);
 	})(req, res, next);
-}
-
-exports.testUpload = (req, res, next) => {
-	
 }

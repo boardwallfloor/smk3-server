@@ -97,6 +97,7 @@ exports.show_all = async (req, res, next) => {
 		if(req.query.sort != undefined) {
 			sort = handleSort(req.query.sort);
 		}
+		debug(sort)
 
 		Notification.find(filter).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
@@ -127,7 +128,7 @@ exports.show_ten = async (req, res, next) => {
 	}			
 	async.parallel({
 		data: (callback) => {
-			Notification.find(filter).sort('year +1').limit(10).exec(callback)
+			Notification.find(filter).sort({'remind_date':'desc'}).limit(10).exec(callback)
 		},
 		count: (callback) => {
 			Notification.countDocuments(filter).exec(callback)

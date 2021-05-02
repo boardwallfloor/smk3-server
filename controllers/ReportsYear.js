@@ -119,7 +119,7 @@ exports.show_ten = async (req, res, next) => {
 	}			
 	async.parallel({
 		data: (callback) => {
-			Report.find(filter).populate('author').populate('institution').sort('year +1').limit(10).exec(callback)
+			Report.find(filter).populate('author').populate('institution').sort({'year':'desc'}).limit(10).exec(callback)
 		},
 		count: (callback) => {
 			Report.countDocuments(filter).exec(callback)
@@ -894,7 +894,7 @@ exports.send_data = (req, res, next) => {
 		async (err, results) =>{
 			if(err){return next(err);}
 			debug(results);
-			// res.json(results);
+			debug('Generating file')
 			await exportFile.reportYearToExcel(results, res)
 		}
 		)
