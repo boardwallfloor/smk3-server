@@ -454,22 +454,22 @@ exports.create = [
 					a: {
 						information: newFileInput.question7.a.information,
 						file: {
-							title: newFileInput.question8.a.file.title,
-							src: newFileInput.question8.a.file.src,
+							title: newFileInput.question7.a.file.title,
+							src: newFileInput.question7.a.file.src,
 						}
 					},
 					b: {
 						information: newFileInput.question7.b.information,
 						file: {
-							title: newFileInput.question8.b.file.title,
-							src: newFileInput.question8.b.file.src,
+							title: newFileInput.question7.b.file.title,
+							src: newFileInput.question7.b.file.src,
 						}
 					},
 					c: {
 						information: newFileInput.question7.c.information,
 						file: {
-							title: newFileInput.question8.c.file.title,
-							src: newFileInput.question8.c.file.src,
+							title: newFileInput.question7.c.file.title,
+							src: newFileInput.question7.c.file.src,
 						}
 					},
 				},
@@ -495,7 +495,7 @@ exports.create = [
 							src: newFileInput.question8.c.file.src,
 						}
 					},
-					c: {
+					d: {
 						information: newFileInput.question8.d.information,
 						file: {
 							title: newFileInput.question8.d.file.title,
@@ -744,22 +744,22 @@ exports.update = [
 					a: {
 						information: newFileInput.question7.a.information,
 						file: {
-							title: newFileInput.question8.a.file.title,
-							src: newFileInput.question8.a.file.src,
+							title: newFileInput.question7.a.file.title,
+							src: newFileInput.question7.a.file.src,
 						}
 					},
 					b: {
 						information: newFileInput.question7.b.information,
 						file: {
-							title: newFileInput.question8.b.file.title,
-							src: newFileInput.question8.b.file.src,
+							title: newFileInput.question7.b.file.title,
+							src: newFileInput.question7.b.file.src,
 						}
 					},
 					c: {
 						information: newFileInput.question7.c.information,
 						file: {
-							title: newFileInput.question8.c.file.title,
-							src: newFileInput.question8.c.file.src,
+							title: newFileInput.question7.c.file.title,
+							src: newFileInput.question7.c.file.src,
 						}
 					},
 				},
@@ -785,7 +785,7 @@ exports.update = [
 							src: newFileInput.question8.c.file.src,
 						}
 					},
-					c: {
+					d: {
 						information: newFileInput.question8.d.information,
 						file: {
 							title: newFileInput.question8.d.file.title,
@@ -868,7 +868,7 @@ exports.delete = (req, res, next) => {
 	})
 }
 
-exports.send_data = (req, res, next) => {
+exports.export = (req, res, next) => {
 
 	let excludedFileList = '';
 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
@@ -896,6 +896,40 @@ exports.send_data = (req, res, next) => {
 			debug(results);
 			debug('Generating file')
 			await exportFile.reportYearToExcel(results, res)
+			// res.json(results)
+		}
+		)
+}
+
+exports.exportall = (req, res, next) => {
+
+	let excludedFileList = '';
+	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
+	const pointListFour = ['a','b','c','d']
+
+	for(let a = 0; a < questionList.length; a++){
+		for(let i = 0; i < 4; i++){
+			if(questionList[i] === 'question10'){
+				for(let _b=0; _b < 4; _b++){
+					excludedFileList += '-report.' + questionList[a]+pointListFour[i]+ pointListFour[_b] + '.file'		
+				}
+			}else{
+			excludedFileList += '-report.' + questionList[a]+'.'+ pointListFour[i] + '.file'
+			}
+		if(a != questionList.length){
+			excludedFileList += ' '
+			}
+		}
+	}
+
+	debug(excludedFileList)
+	Report.find().select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
+		async (err, results) =>{
+			if(err){return next(err);}
+			debug(results);
+			debug('Generating file')
+			// await exportFile.testExportAll(results, res)
+			res.json(results.length)
 		}
 		)
 }

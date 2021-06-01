@@ -32,7 +32,7 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 //Middleware
 var app = express();
 const corsOptions = {
-  origin: ['http://localhost:3000','http://192.168.2.8:3000'],
+  origin: ['http://localhost:3000','http://192.168.2.11:3000'],
   credentials: true,
   exposedHeaders: ['Content-Range'],
 }

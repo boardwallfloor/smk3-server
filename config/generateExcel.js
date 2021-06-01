@@ -6,8 +6,8 @@ require('moment/locale/id')
 moment.locale('id')
 
 const boolToText = (boolData,type) => {
-  debug(typeof boolData)
-
+  debug('boolData : %O',boolData)
+  debug('type : %O',type)
   if(type !== 'report'){
   	if(!boolData){
     	return 'Belum tervalidasi'
@@ -185,134 +185,248 @@ exports.reportYearToExcel = (reportYear, res) => {
   //1
   ws.cell(2, 6, 2, 8, true).string('SMK3 di Fasyankes').style(redFill);
   ws.cell(3, 6).string('Ada komitmen/kebijakan').style(yellowFill);
-  ws.cell(4, 6).string(boolToText(reportYear.report.question1.a.information, reportType))
+  
   ws.column(6).setWidth(45)
   ws.cell(3, 7).string('Dokumen rencana kegiatan K3').style(purpleFill);
-  ws.cell(4, 7).string(boolToText(reportYear.report.question1.b.information, reportType))
+  
   ws.column(7).setWidth(45)
   ws.cell(3, 8).string('Ada Tim K3/Pengelola  K3').style(yellowFill);
-  ws.cell(4, 8).string(boolToText(reportYear.report.question1.c.information, reportType))
+  
   ws.column(8).setWidth(45)
   // 2
   ws.cell(2, 9, 2, 10, true).string('Pengenalan Potensi Bahaya dan Pengendalian Resiko').style(brownFill);
   ws.cell(3, 9).string('Identifikasi potensi bahaya').style(purpleFill);
-  ws.cell(4, 9).string(boolToText(reportYear.report.question2.a.information, reportType))
+  
   ws.column(9).setWidth(45)
   ws.cell(3, 10).string('Penilaian risiko').style(yellowFill);
-  ws.cell(4, 10).string(boolToText(reportYear.report.question2.c.information, reportType))
+  
   ws.column(10).setWidth(45)
   // 3
   ws.cell(2, 11, 2, 14, true).string('Penerapan Kewaspadaan Standar').style(redFill);
   ws.cell(3, 11).string('Sarana dan Prasarana Kebersihan Tangan').style(purpleFill);
-  ws.cell(4, 11).string(boolToText(reportYear.report.question3.a.information, reportType))
+  
   ws.column(11).setWidth(45)
   ws.cell(3, 12).string('Penyediaan APD').style(yellowFill);
-  ws.cell(4, 12).string(boolToText(reportYear.report.question3.b.information, reportType))
+  
   ws.column(12).setWidth(45)
   ws.cell(3, 13).string('Pengelolaan jarun dan alat tajam').style(purpleFill);
-  ws.cell(4, 13).string(boolToText(reportYear.report.question3.c.information, reportType))
+  
   ws.column(13).setWidth(45)
   ws.cell(3, 14).string('Dekontaminasi peralatan').style(yellowFill);
-  ws.cell(4, 14).string(boolToText(reportYear.report.question3.d.information, reportType))
+  
   ws.column(14).setWidth(45)
 
   // 4
   ws.cell(2, 15, 2, 17, true).string('Penerapan Prinsip Ergonomi Pada').style(brownFill);
   ws.cell(3, 15).string('Angkat angkut pasien (pasien, barang, dan lain-lain), postur kerja').style(purpleFill);
-  ws.cell(4, 15).string(boolToText(reportYear.report.question4.a.information, reportType))
+  
   ws.column(15).setWidth(45)
   ws.cell(3, 16).string('Pengaturan shift kerja').style(yellowFill);
-  ws.cell(4, 16).string(boolToText(reportYear.report.question4.b.information, reportType))
+  
   ws.column(16).setWidth(45)
   ws.cell(3, 17).string('Pengaturan Tata Ruang Kerja').style(purpleFill);
-  ws.cell(4, 17).string(boolToText(reportYear.report.question4.c.information, reportType))
+  
   ws.column(17).setWidth(45)
 
   // 5
   ws.cell(2, 18, 2, 20, true).string('Pelayanan Kesehatan Kerja dan Imunisasi').style(redFill);
   ws.cell(3, 18).string('Pemeriksaan kesehatan SDM  Fasyankes').style(yellowFill);
-  ws.cell(4, 18).string(boolToText(reportYear.report.question5.a.information, reportType))
+  
   ws.column(18).setWidth(45)
   ws.cell(3, 19).string('Fasyankes melakukan pemeriksaan kesehatan berkala').style(purpleFill);
-  ws.cell(4, 19).string(boolToText(reportYear.report.question5.b.information, reportType))
+  
   ws.column(19).setWidth(45)
   ws.cell(3, 20).string('Fasyankes melakukan imunisasi pada SDM Fasyankes yang beresiko').style(yellowFill);
-  ws.cell(4, 20).string(boolToText(reportYear.report.question5.c.information, reportType))
+  
   ws.column(20).setWidth(45)
 
   // 6
   ws.cell(2, 21, 2, 22, true).string('Pembudayaan PHBS di Fasyankes').style(brownFill);
   ws.cell(3, 21).string('Melakukan sosialisasi').style(purpleFill);
-  ws.cell(4, 21).string(boolToText(reportYear.report.question6.a.information, reportType))
+  
   ws.column(21).setWidth(45)
   ws.cell(3, 22).string('Media KIE').style(yellowFill);
-  ws.cell(4, 22).string(boolToText(reportYear.report.question6.b.information, reportType))
+  
   ws.column(22).setWidth(45)
 
   // 7
   ws.cell(2, 23, 2, 25, true).string('Aspek Keselamatan dan Kesehatan  Kerja  pada Pengelolaan Bahan Beracun dan Berbahaya (B3)  dan Limbah Domestik').style(redFill);
   ws.cell(3, 23).string('Daftar inventaris B3').style(purpleFill);
-  ws.cell(4, 23).string(boolToText(reportYear.report.question7.a.information, reportType))
+  
   ws.column(23).setWidth(45)
   ws.cell(3, 24).string('SPO penggunaan B3').style(yellowFill);
-  ws.cell(4, 24).string(boolToText(reportYear.report.question7.b.information, reportType))
+  
   ws.column(24).setWidth(45)
   ws.cell(3, 25).string('Penyimpanan dan Pembuangan limbah B3 dan domestik sesuai persyaratan').style(purpleFill);
-  ws.cell(4, 25).string(boolToText(reportYear.report.question7.c.information, reportType))
+  
   ws.column(25).setWidth(45)
   
   // 8
   ws.cell(2, 26, 2, 29, true).string('Pengelolaan Sarana dan Prasarana dari Aspek K3').style(brownFill);
   ws.cell(3, 26).string('Pengukuran pencahayaan, kualitas air, kualitas udara').style(yellowFill);
-  ws.cell(4, 26).string(boolToText(reportYear.report.question8.a.information, reportType))
+  
   ws.column(26).setWidth(45)
   ws.cell(3, 27).string('Pemeliharaan Kebersihan Bangunan').style(purpleFill);
-  ws.cell(4, 27).string(boolToText(reportYear.report.question8.b.information, reportType))
+  
   ws.column(27).setWidth(45)
   ws.cell(3, 28).string('Ketersediaan air dan listrik').style(yellowFill);
-  ws.cell(4, 28).string(boolToText(reportYear.report.question8.c.information, reportType))
+  
   ws.column(28).setWidth(45)
   ws.cell(3, 29).string('Ketersediaan toilet sesuai standar').style(purpleFill);
-  ws.cell(4, 29).string(boolToText(reportYear.report.question8.d.information, reportType))
+  
   ws.column(29).setWidth(45)
 
   // 9
   ws.cell(2, 30).string('Pengelolaan Peralatan Medis Dari Aspek K3').style(redFill);
   ws.cell(3, 30).string('Pemeliharaan pada peralatan medis').style(yellowFill);
-  ws.cell(4, 30).string(boolToText(reportYear.report.question9.information, reportType))
+  
   ws.column(30).setWidth(45)
 
   // 10
   ws.cell(2, 31, 2, 36, true).string('Kesiapsiagaan menghadapi kondisi darurat/bencana ').style(brownFill);
   ws.cell(3, 31).string('SPO Penanganan Kondisi Darurat / Bencana').style(purpleFill);
-  ws.cell(4, 31).string(boolToText(reportYear.report.question10.a.information, reportType))
+  
   ws.column(31).setWidth(45)
   ws.cell(3, 32).string('Proteksi kebakaran').style(yellowFill);
-  ws.cell(4, 32).string(boolToText(reportYear.report.question10.b.a.information, reportType))
+  
   ws.column(32).setWidth(45)
   ws.cell(3, 33).string('Aktif ( Jumlah APAR dan alat pemadam lainnya)').style(purpleFill);
-  ws.cell(4, 33).string(reportYear.report.question10.b.b.information)
+  
   ws.column(33).setWidth(45)
   ws.cell(3, 34).string('Pasif ( Pintu dan tangga darurat, jalur evakuasi)').style(yellowFill);
-  ws.cell(4, 34).string(reportYear.report.question10.b.c.information)
+  
   ws.column(34).setWidth(45)
   ws.cell(3, 35).string('Darurat Bencana').style(purpleFill);
-  ws.cell(4, 35).string(boolToText(reportYear.report.question10.c.a.information, reportType))
+  
   ws.column(35).setWidth(45)
   ws.cell(3, 36).string('Penggunaan APAR').style(yellowFill);
-  ws.cell(4, 36).string(boolToText(reportYear.report.question10.c.b.information, reportType))
+  
   ws.column(36).setWidth(45)
 
   // 11
   ws.cell(2, 37, 2, 38, true).string('Pelatihan').style(redFill);
   ws.cell(3, 37).string('SDM Fasyankes terlatih K3').style(purpleFill);
-  ws.cell(4, 37).string(boolToText(reportYear.report.question11.a.information, reportType))
+  
   ws.column(37).setWidth(45)
   ws.cell(3, 38).string('Jumlah SDM Fasyankes yang terlatih K3').style(yellowFill);
-  ws.cell(4, 38).string(boolToText(reportYear.report.question11.b.information, reportType))
+  
   ws.column(38).setWidth(45)
 
   // Filling cell 
+  // ws.cell(4, 6).string(boolToText(reportYear.report.question1.a.information, reportType))
+  // ws.cell(4, 7).string(boolToText(reportYear.report.question1.b.information, reportType))
+  // ws.cell(4, 8).string(boolToText(reportYear.report.question1.c.information, reportType))
+  // ws.cell(4, 9).string(boolToText(reportYear.report.question2.a.information, reportType))
+  // ws.cell(4, 10).string(boolToText(reportYear.report.question2.b.information, reportType))
+  // ws.cell(4, 11).string(boolToText(reportYear.report.question2.c.information, reportType))
+  // ws.cell(4, 12).string(boolToText(reportYear.report.question3.a.information, reportType))
+  // ws.cell(4, 13).string(boolToText(reportYear.report.question3.b.information, reportType))
+  // ws.cell(4, 14).string(boolToText(reportYear.report.question3.c.information, reportType))
+  // ws.cell(4, 15).string(boolToText(reportYear.report.question3.d.information, reportType))
+  // ws.cell(4, 15).string(boolToText(reportYear.report.question4.a.information, reportType))
+  // ws.cell(4, 16).string(boolToText(reportYear.report.question4.b.information, reportType))
+  // ws.cell(4, 17).string(boolToText(reportYear.report.question4.c.information, reportType))
+  // ws.cell(4, 18).string(boolToText(reportYear.report.question5.a.information, reportType))
+  // ws.cell(4, 19).string(boolToText(reportYear.report.question5.b.information, reportType))
+  // ws.cell(4, 20).string(boolToText(reportYear.report.question5.c.information, reportType))
+  // ws.cell(4, 21).string(boolToText(reportYear.report.question6.a.information, reportType))
+  // ws.cell(4, 22).string(boolToText(reportYear.report.question6.b.information, reportType))
+  // ws.cell(4, 23).string(boolToText(reportYear.report.question7.a.information, reportType))
+  // ws.cell(4, 24).string(boolToText(reportYear.report.question7.b.information, reportType))
+  // ws.cell(4, 25).string(boolToText(reportYear.report.question7.c.information, reportType))
+  // ws.cell(4, 26).string(boolToText(reportYear.report.question8.a.information, reportType))
+  // ws.cell(4, 27).string(boolToText(reportYear.report.question8.b.information, reportType))
+  // ws.cell(4, 28).string(boolToText(reportYear.report.question8.c.information, reportType))
+  // // ws.cell(4, 29).string(boolToText(reportYear.report.question8.d.information, reportType))
+  // ws.cell(4, 30).string(boolToText(reportYear.report.question9.information, reportType))
+  // ws.cell(4, 32).string(boolToText(reportYear.report.question10.a.information, reportType))
+
+  // ws.cell(4, 33).string(boolToText(reportYear.report.question10.b.a.information, reportType))
+  // ws.cell(4, 34).string(reportYear.report.question10.b.b.information)
+  // ws.cell(4, 35).string(reportYear.report.question10.b.c.information)
+
+  // ws.cell(4, 36).string(boolToText(reportYear.report.question10.c.a.information, reportType))
+  // ws.cell(4, 36).string(boolToText(reportYear.report.question10.c.b.information, reportType))
+  // ws.cell(4, 37).string(boolToText(reportYear.report.question11.a.information, reportType))
+  // ws.cell(4, 39).string(boolToText(reportYear.report.question11.b.information, reportType))
+
+  const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
+
+  const questionLengthOne = ['question9'] 
+  const questionLengthTwo = ['question6','question11']
+  const questionLengthThree = ['question1','question2','question4','question5','question7']
+  const questionLengthFour = ['question3','question8']
+  
+  debug(reportYear.report[questionList[0]].a.information)
+  let row = 4
+  for(let _b = 0; _b < 1; _b++){
+    let column = 6
+    for(let _a = 0; _a < questionList.length; _a++){
+      if(questionLengthTwo.indexOf(questionList[_a]) != -1){
+        debug(questionList[_a])
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].a.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].b.information,reportType))
+        column++
+      }
+      if(questionLengthOne.indexOf(questionList[_a]) != -1){
+        debug(questionList[_a])
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].information,reportType))
+        column++
+      }
+      if(questionLengthThree.indexOf(questionList[_a]) != -1){
+        debug(questionList[_a])
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].a.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].b.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].c.information,reportType))
+        column++
+      }
+      if(questionLengthFour.indexOf(questionList[_a]) != -1){
+        debug(questionList[_a])
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].a.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].b.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].c.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].d.information,reportType))
+        column++
+      }
+      if(questionList[_a] === 'question10'){
+        debug(questionList[_a])
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].a.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].b.a.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].b.b.information, reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].b.c.information, reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].c.a.information,reportType))
+        column++
+        // debug(row)
+        ws.cell(row,column).string(boolToText(reportYear.report[questionList[_a]].c.b.information,reportType))
+        column++
+        }
+      }
+      row++
+    }
+  
   // author
   ws.cell(4, 1).string(reportYear.author.full_name)
   ws.column(1).setWidth(50)
@@ -390,7 +504,7 @@ exports.reportSemesterToExcel = (reportSemester, res) => {
   ws.cell(2, 20).string('Keterangan').style(yellowFill)
   ws.column(19).setWidth(55)
 
-  //Fill the cell with data
+  //DATA INSERT
   
   // Author input
   ws.cell(3, 1).string(reportSemester.author.full_name)
@@ -413,4 +527,64 @@ exports.reportSemesterToExcel = (reportSemester, res) => {
 
  
   wb.write('Excel.xlsx',res); 
+}
+
+const testHeader = (reportSemester, res) =>{
+  const [wb, ws, greenFill, yellowFill, redFill,blueFill] = generateExcelFile(reportSemester)
+
+  ws.cell(1, 1, 2, 1, true).string('Nama Operator').style(greenFill);
+  ws.column(1).setWidth(50)
+  // date
+  ws.cell(1, 2, 2, 2, true).string('Tanggal').style(blueFill);
+  ws.column(2).setWidth(20)
+
+  // validated
+  ws.cell(1, 3, 2, 3, true).string('Status Validasi').style(greenFill);
+  ws.column(3).setWidth(25)
+
+  // institution
+  ws.cell(1, 4, 2, 4, true).string('Fasyankes').style(blueFill);
+  ws.column(4).setWidth(45)
+
+  //report
+  ws.cell(1, 5, 1, 20, true).string('Laporan').style(greenFill);
+
+  ws.cell(2, 5).string('Jumlah SDM Fasyankes').style(redFill)
+  ws.cell(2, 6).string('Keterangan').style(yellowFill)
+  ws.column(5).setWidth(45)
+
+  ws.cell(2, 7).string('Jumlah SDM Fasyankes yang sakit').style(redFill)
+  ws.cell(2, 8).string('Keterangan').style(yellowFill)
+  ws.column(7).setWidth(45)
+
+  ws.cell(2, 9).string('Jumlah SDM yang sakit').style(redFill)
+  ws.cell(2, 10).string('Keterangan').style(yellowFill)
+  ws.column(9).setWidth(45)
+
+  ws.cell(2, 11).string('Jumlah kasus dugaan penyakit akibat kerja pada suatu SDM Fasyankes').style(redFill)
+  ws.cell(2, 12).string('Keterangan').style(yellowFill)
+  ws.column(11).setWidth(70)
+
+  ws.cell(2, 13).string('Jumlah kasus penyakit akibat kerja pada SDM Fasyankes').style(redFill)
+  ws.cell(2, 14).string('Keterangan').style(yellowFill)
+  ws.column(13).setWidth(65)
+
+  ws.cell(2, 15).string('Jumlah kasus kecelakaan akibat kerja pada SDM Fasyankes').style(redFill)
+  ws.cell(2, 16).string('Keterangan').style(yellowFill)
+  ws.column(15).setWidth(65)
+
+  ws.cell(2, 17).string('Jumlah kasus kejadian hampir celaka pada SDM Fasyankes').style(redFill)
+  ws.cell(2, 18).string('Keterangan').style(yellowFill)
+  ws.column(17).setWidth(65)
+
+  ws.cell(2, 19).string('Jumlah hari absen SDM Fasyankes karena sakit').style(redFill)
+  ws.cell(2, 20).string('Keterangan').style(yellowFill)
+  ws.column(19).setWidth(55)
+
+  return wb
+}
+
+exports.testExportAll = (reportSemester, res) => {
+  workSheet = testHeader(reportSemester, res)
+  workSheet.write('Excel.xlsx',res)
 }

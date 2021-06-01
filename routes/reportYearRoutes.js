@@ -7,7 +7,8 @@ const email_controller = require('../controllers/Emails');
 router.use(reports_year_controller.set_header)
 //Restful
 router.get('/db', reports_year_controller.show_ten);
-router.get('/send/:id', reports_year_controller.send_data);
+router.get('/export/:id', reports_year_controller.export);
+router.get('/exportall', reports_year_controller.exportall);
 
 router.get('/', reports_year_controller.show_all);
 router.post('/', reports_year_controller.create);

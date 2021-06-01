@@ -2,6 +2,7 @@
 const nodemailer = require('nodemailer');
 const fs = require("fs");
 const ejs = require("ejs")
+const debug = require('debug')('email')
 
 exports.sendEmail =  (results) => {
     // Generate SMTP service account from ethereal.email
@@ -11,7 +12,7 @@ exports.sendEmail =  (results) => {
             return process.exit(1);
         }
 
-        console.log('Credentials obtained, sending message...');
+        debug('Credentials obtained, sending message...');
 
         // Create a SMTP transporter object
         // let transporter = nodemailer.createTransport({
@@ -32,11 +33,11 @@ exports.sendEmail =  (results) => {
             pass: "ba3b146d87a065"
           }
         });
-        console.log("Finding Template")
+        debug("Finding Template")
         // const data = await ejs.renderFile('../config/emailTemplate.ejs');
         const data = await ejs.renderFile(__dirname + "/emailTemplate.ejs", { results: results })
 
-        console.log("Template found, forming message")
+        debug("Template found, forming message")
         // Message object
         let message = {
             from: 'Sender Name <sender@example.com>',
@@ -48,14 +49,14 @@ exports.sendEmail =  (results) => {
 
         transporter.sendMail(message, (err, info) => {
             if (err) {
-                console.log('Error occurred. ' + err.message);
+                debug('Error occurred. ' + err.message);
                 return process.exit(1);
             }
 
-            console.log('Message sent: %s', info.messageId);
+            debug('Message sent: %s', info.messageId);
             // Preview only available when sending through an Ethereal account
-            // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-        console.log("Email Sent!")
+            // debug('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        debug("Email Sent!")
         });
     });
 }
