@@ -48,13 +48,13 @@ const reportGroupSchema = new Schema({
 	question4: TrioBoolQuestionSchema,
 	question5: TrioBoolQuestionSchema,
 	question6: DuoBoolQuestionSchema,
+	question7: TrioBoolQuestionSchema,
 	question8: {
 		a: BoolQuestionSchema,
 		b: BoolQuestionSchema,
 		c: BoolQuestionSchema,
 		d: BoolQuestionSchema,
 	},
-	question8: TrioBoolQuestionSchema,
 	question9: BoolQuestionSchema,
 	question10: {
 		a: BoolQuestionSchema,
