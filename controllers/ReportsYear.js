@@ -928,8 +928,8 @@ exports.exportall = (req, res, next) => {
 			if(err){return next(err);}
 			debug(results);
 			debug('Generating file')
-			// await exportFile.testExportAll(results, res)
-			res.json(results.length)
+			await exportFile.testExportAll(results, res)
+			// res.json(results.length)
 		}
 		)
 }
