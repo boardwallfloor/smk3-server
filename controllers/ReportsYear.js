@@ -928,7 +928,7 @@ exports.exportall = (req, res, next) => {
 			if(err){return next(err);}
 			debug(results);
 			debug('Generating file')
-			await exportFile.testExportAll(results, res)
+			await exportFile.exportAll(results, res, results.length)
 			// res.json(results.length)
 		}
 		)
