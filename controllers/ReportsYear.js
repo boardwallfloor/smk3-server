@@ -4,7 +4,7 @@ const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_year')
 const Notification = require('../models/notification');
-const exportFile = require('../config/generateExcel')
+const exportFile = require('../config/generateExcel/generateExcel')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -928,8 +928,7 @@ exports.exportall = (req, res, next) => {
 			if(err){return next(err);}
 			debug(results);
 			debug('Generating file')
-			await exportFile.exportAll(results, res, results.length)
-			// res.json(results.length)
+			await exportFile.reportsYearAllToExcel(results, res, results.length)
 		}
 		)
 }

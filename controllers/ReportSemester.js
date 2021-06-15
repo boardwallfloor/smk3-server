@@ -4,7 +4,7 @@ const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_semester')
 const Notification = require('../models/notification');
-const exportFile = require('../config/generateExcel')
+const exportFile = require('../config/generateExcel/generateExcel')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -28,7 +28,7 @@ const handleSort = (sort) => {
 }
 
 const checkIfReminderExist = (author, date) => {
-	debug('date in fCheckreminder : %O', date)
+	debug('date in ifCheckreminder : %O', date)
 	let inputMonthMin, inputMonthMax
 	
 	let inputDate = new Date(date)
@@ -379,30 +379,25 @@ exports.send_data =  (req, res, next) => {
 		)
 }
 
-// exports.send_data_excel =  (req, res, next) => {
-// 	let excludedFileList = '';
-// 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
-// 	for(let a = 0; a < questionList.length; a++){
-// 		excludedFileList += '-report.' + questionList[a] + '.file'
-// 		if(a != questionList.length){
-// 			excludedFileList += ' '
-// 		}
-// 	}
-// 	debug(excludedFileList)
-// 	debug(req.params)
-// 	Report.findById('5f915f649f0fb13293392c54').select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
-// 		async (err, results) =>{
-// 			if(err){return next(err);}
-// 			debug(results);
-// 			debug('Generating file')
-// 			await exportFile.reportSemesterToExcel(results, res)
-// 		}
-// 		)
-// }
 
-// exports.test = (req,res,next) => {
-// 	Notification.findOne({ remind_date: { $gte: '2023-7-01', $lte: '2023-12-31' }, remindee: '5f3c27cbbff2e5e0e8182ee1', report_type : 'semesterly' }).exec( (err, results) => {
-// 		debug(results)
-// 		res.json(results)
-// 	})
-// }
+exports.exportall =  (req, res, next) => {
+	let excludedFileList = '';
+	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
+	for(let a = 0; a < questionList.length; a++){
+		excludedFileList += '-report.' + questionList[a] + '.file'
+		if(a != questionList.length){
+			excludedFileList += ' '
+		}
+	}
+	debug(excludedFileList)
+	debug(req.params)
+	Report.find().select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
+		async (err, results) =>{
+			if(err){return next(err);}
+			debug(results);
+			debug('Generating file')
+			await exportFile.reportsSemesterAllToExcel(results, res, results.length)
+		}
+		)
+}
+

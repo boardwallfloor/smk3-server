@@ -140,6 +140,27 @@ exports.show_ten = async (req, res, next) => {
 	})
 }
 
+exports.count = async (req, res, next) => {
+	let filter={};
+	debug(req.query)
+
+	if(req.query.filter != undefined){
+		filter = await handleFilter(req.query.filter);
+	}			
+	async.parallel({
+		data: (callback) => {
+			Notification.find(filter).sort({'remind_date':'desc'}).exec(callback)
+		},
+		count: (callback) => {
+			Notification.countDocuments(filter).exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		debug(results)
+		res.json(results);
+	})
+}
+
 exports.create = [
 	body('remindee'),
 	body('remind_date').toDate().optional({ checkFalsy: true }).isISO8601(),

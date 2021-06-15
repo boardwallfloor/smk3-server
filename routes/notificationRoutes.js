@@ -10,6 +10,7 @@ router.get('/', notification_controller.show_all);
 router.post('/', notification_controller.create);
 //Dashboard Only
 router.get('/db', notification_controller.show_ten);
+router.get('/count', notification_controller.count);
 
 router.get('/:id', notification_controller.show_one);
 router.put('/:id', notification_controller.update);
