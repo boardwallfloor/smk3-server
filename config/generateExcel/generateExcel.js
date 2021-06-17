@@ -26,10 +26,20 @@ const boolToText = (boolData,type) => {
 }
 
 const undefinedToEmptySpace = (data) => {
-  if(data === undefined){
+  if(data === undefined || data == null){
+    debug(data)
     return ''
   }
   return data
+}
+
+const formatReportType = (reportType) => {
+  if(reportType === 'semesterly'){
+    return 'Laporan Semester'
+  }
+  if(reportType === 'yearly'){
+    return 'Laporan Tahunan'
+  }
 }
 
 
@@ -296,4 +306,57 @@ exports.reportsSemesterAllToExcel = (reportSemester, res, length) => {
 
  
   wb.write('Excel.xlsx',res); 
+}
+
+exports.notificationToExcel = (notification, res) => {
+  const reportType = 'report'
+  const [ws,wb] = excelLayout.notificationHeader(notification, res)
+
+  ws.cell(2,1).string(formatReportType(notification.report_type))
+  ws.column(1).setWidth(50)
+  // date
+  ws.cell(2,2).string((moment(notification.remind_date).format('LL')))
+  ws.column(2).setWidth(20)
+
+  // validated
+  ws.cell(2,3).string(notification.notification_status)
+  ws.column(3).setWidth(25)
+
+  // institution
+  ws.cell(2,4).string(notification.remindee.full_name)
+  ws.column(4).setWidth(45)
+
+  debug('Sending file')
+
+ 
+  wb.write('Excel.xlsx',res); 
+  
+}
+exports.notificationAllToExcel = (notification, res, length) => {
+  debug(length)
+  const reportType = 'report'
+  const [ws,wb] = excelLayout.notificationHeader(notification, res)
+
+  let row = 2
+  for(let _a=0; _a< length; _a++){
+
+    ws.cell(row,1).string(formatReportType(notification[_a].report_type))
+    ws.column(1).setWidth(50)
+
+    ws.cell(row,2).string((moment(notification[_a].remind_date).format('LL')))
+    ws.column(2).setWidth(20)
+
+    ws.cell(row,3).string(notification[_a].notification_status)
+    ws.column(3).setWidth(25)
+
+    ws.cell(row,4).string(undefinedToEmptySpace(notification[_a].remindee.full_name))
+    ws.column(4).setWidth(45)
+    row++
+  }
+
+  debug('Sending file')
+
+ 
+  wb.write('Excel.xlsx',res); 
+  
 }

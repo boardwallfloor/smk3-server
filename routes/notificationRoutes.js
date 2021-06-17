@@ -8,7 +8,10 @@ const notification_controller = require('../controllers/Notifications')
 router.use(notification_controller.set_header)
 router.get('/', notification_controller.show_all);
 router.post('/', notification_controller.create);
-//Dashboard Only
+
+router.get('/send/:id', notification_controller.export);
+router.get('/exportall', notification_controller.exportall);
+
 router.get('/db', notification_controller.show_ten);
 router.get('/count', notification_controller.count);
 

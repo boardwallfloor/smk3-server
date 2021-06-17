@@ -3,10 +3,11 @@ const debug = require('debug')('notif')
 const { body, validationResult } = require('express-validator');
 const moment = require('moment')
 
+const cronjob = require('../config/CronJob')
 const Notification = require('../models/notification');
 const reportYear = require('../models/report_year');
 const reportSemester = require('../models/report_semester');
-const cronjob = require('../config/CronJob')
+const exportFile = require('../config/generateExcel/generateExcel')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -271,4 +272,31 @@ exports.delete = (req, res, next) => {
 		// res.status(200).send("Sucessfully deleted Notification");
 		res.json(results);
 	})
+}
+
+
+exports.export = (req, res, next) => {
+
+	Notification.findById(req.params.id).populate('remindee','full_name').exec(
+		async (err, results) =>{
+			if(err){return next(err);}
+			debug(results);
+			debug('Generating file')
+			await exportFile.notificationToExcel(results, res)
+			// res.json(results)
+		}
+		)
+}
+
+exports.exportall = (req, res, next) => {
+
+	Notification.find().populate('remindee','full_name').exec(
+		async (err, results) =>{
+			if(err){return next(err);}
+			debug(results);
+			debug('Generating file')
+			await exportFile.notificationAllToExcel(results, res, results.length)
+			// res.json(results)
+		}
+		)
 }

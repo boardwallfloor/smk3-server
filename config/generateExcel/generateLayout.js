@@ -346,3 +346,25 @@ exports.reportsSemesterHeader = (reportSemester, res) => {
   return [ws, wb]
 
 }
+
+exports.notificationHeader = (notificaton, res) => {
+  const [wb, ws, greenFill, yellowFill, redFill,blueFill] = generateExcelFile(notificaton)
+
+  debug('Generating file')
+
+  ws.cell(1, 1).string('Jenis Laporan').style(greenFill);
+  ws.column(1).setWidth(50)
+  // date
+  ws.cell(1, 2).string('Tanggal').style(blueFill);
+  ws.column(2).setWidth(20)
+
+  // validated
+  ws.cell(1, 3).string('Status Peringatan').style(greenFill);
+  ws.column(3).setWidth(25)
+
+  // institution
+  ws.cell(1, 4).string('Tujuan Peringatan').style(blueFill);
+  ws.column(4).setWidth(45)
+
+  return [ws,wb]
+}

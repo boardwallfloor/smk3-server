@@ -358,7 +358,7 @@ exports.download = (req, res, next) => {
 }
 
 
-exports.send_data =  (req, res, next) => {
+exports.export =  (req, res, next) => {
 	let excludedFileList = '';
 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
 	for(let a = 0; a < questionList.length; a++){
