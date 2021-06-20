@@ -16,7 +16,6 @@ router.get('/db', reports_semester_controller.show_ten);
 router.get('/send/:id', reports_semester_controller.export);
 router.get('/exportall', reports_semester_controller.exportall);
 
-
 router.get('/:id', reports_semester_controller.show_one);
 router.put('/:id', reports_semester_controller.update);
 router.delete('/:id', reports_semester_controller.delete);

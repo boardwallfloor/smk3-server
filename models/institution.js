@@ -7,6 +7,6 @@ const InstitutionSchema = new Schema({
 	address: {type: String, required: true, max: 300},
 	city: {type: String, required: true, max: 25},
 	province: {type: String, required: true, max: 25},
-})
+},{ timestamps: { createdAt: 'created_at' } })
 
 module.exports = mongoose.model('Institution', InstitutionSchema);

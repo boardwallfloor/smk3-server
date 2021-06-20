@@ -40,17 +40,17 @@ const dateToSemester = (date) => {
 }
 
 const findReportYearQuery = (inputDate, inputRemindee) => {
-	return reportYear.findOne({ year: { $gte: `${inputDate}-0-01`, $lte: `${inputDate}-11-31` }, author: inputRemindee })
+	return reportYear.findOne({ year: { $gte: `${inputDate}-1-01`, $lte: `${inputDate}-12-31` }, author: inputRemindee })
 }
 
 const findReportSemesterQuery = (inputYear, inputMonth, inputRemindee) => {
 	let inputMonthMin, inputMonthMax
 	if(inputMonth < 7){
-		inputMonthMin = 0;
+		inputMonthMin = 1;
 		inputMonthMax = 6;
 	}else if (inputMonth >= 7){
 		inputMonthMin = 7
-		inputMonthMax = 11
+		inputMonthMax = 12
 	}
 	debug('inputMonthMax :  %O',inputMonthMax)
 	debug('inputMonthMin :  %O', inputMonthMin)
@@ -174,6 +174,7 @@ exports.create = [
 			debug(error)
 			throw new Error();
 		}else{
+			debug(req.body.remind_date)
 			let isReportExist = false;
 			const inputDateYear = req.body.remind_date.getFullYear()
 			const inputDateMonth = req.body.remind_date.getMonth()

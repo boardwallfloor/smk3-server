@@ -14,6 +14,6 @@ const UserSchema = new Schema({
 	user_institution: {type: Schema.Types.ObjectId, ref:'Institution', required: true},
 	nip: {type:String, default: null},
 	password:{type: String, required: true, min:8}
-})
+},{ timestamps: { createdAt: 'created_at' } })
 
 module.exports = mongoose.model('User', UserSchema);

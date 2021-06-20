@@ -72,7 +72,7 @@ const ReportYearSchema = new Schema({
 	year: {type: Date},
 	report: reportGroupSchema,
 	validated: {type: Boolean, default: false},
-})
+},{ timestamps: { createdAt: 'created_at' } })
 
 ReportYearSchema
 .virtual('year_formatted')

@@ -3,6 +3,7 @@ const debug = require('debug')('reportyear');
 const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_year')
+const ReportSemester = require('../models/report_semester')
 const Notification = require('../models/notification');
 const exportFile = require('../config/generateExcel/generateExcel')
 
@@ -60,8 +61,8 @@ exports.set_header = (req, res, next) =>{
 
 
 exports.show_all = async (req, res, next) => {
-
-	debug(Object.keys(req.query).length)
+	debug(req.query)
+	// debug(Object.keys(req.query).length)
 
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
@@ -79,7 +80,7 @@ exports.show_all = async (req, res, next) => {
 		let filter;
 		let start, limitation;
 		let sort;
-
+		const select = req.query.select
 		if(req.query.range != undefined){
 			const range  = await handleRange(req.query.range);
 			[start, limitation] = range;
@@ -93,7 +94,7 @@ exports.show_all = async (req, res, next) => {
 			sort = handleSort(req.query.sort);
 		}
 		
-		Report.find(filter).sort(sort).skip(start).limit(limitation).exec(
+		Report.find(filter).sort(sort).skip(start).select(select).limit(limitation).exec(
 			(err, results) =>{
 				res.json(results)
 			})
@@ -931,4 +932,50 @@ exports.exportall = (req, res, next) => {
 			await exportFile.reportsYearAllToExcel(results, res, results.length)
 		}
 		)
+}
+
+exports.unverifiedReports = async (req, res, next) => {
+	const filter = '5f3c205bb331a0debf25a0b6'
+
+	let excludedFileListYear = '';
+	const questionListYear = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
+	const pointListFour = ['a','b','c','d']
+
+	for(let a = 0; a < questionListYear.length; a++){
+		for(let i = 0; i < 4; i++){
+			if(questionListYear[i] === 'question10'){
+				for(let _b=0; _b < 4; _b++){
+					excludedFileListYear += '-report.' + questionListYear[a]+pointListFour[i]+ pointListFour[_b] + '.file'		
+				}
+			}else{
+			excludedFileListYear += '-report.' + questionListYear[a]+'.'+ pointListFour[i] + '.file'
+			}
+		if(a != questionListYear.length){
+			excludedFileListYear += ' '
+			}
+		}
+	}
+
+	let excludedFileListSemester = '';
+	const questionListSemester = ['question1','question2','question3','question4','question5','question6','question7','question8']
+	for(let a = 0; a < questionListSemester.length; a++){
+		excludedFileListSemester += '-report.' + questionListSemester[a] + '.file'
+		if(a != questionListSemester.length){
+			excludedFileListSemester += ' '
+		}
+	}
+
+	const query = {institution:'5f3c2059b331a0debf25a0b2'}
+	async.parallel({
+		year: (callback) => {
+			Report.find(query).select("validated").exec(callback)
+		},
+		semester: (callback) => {
+			ReportSemester.find(query).select("validated").exec(callback)
+		}
+	},(err, results) => {
+		if(err){return next(err);}
+		debug(results)
+		res.json(results);
+	})
 }

@@ -13,6 +13,7 @@ router.get('/exportall', reports_year_controller.exportall);
 
 router.get('/', reports_year_controller.show_all);
 router.post('/', reports_year_controller.create);
+router.get('/unverifiedreport', reports_year_controller.unverifiedReports);
 
 
 router.get('/:id', reports_year_controller.show_one);

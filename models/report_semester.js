@@ -28,7 +28,7 @@ const ReportSemesterSchema = new Schema({
 	institution:{type: Schema.Types.ObjectId, ref:'Institution', required: true},
 	report: reportGroupSchema ,
 	validated: {type: Boolean, default: false},
-})
+},{ timestamps: { createdAt: 'created_at' } })
 
 
 module.exports = mongoose.model('ReportSemester', ReportSemesterSchema);

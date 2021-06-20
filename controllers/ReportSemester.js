@@ -79,6 +79,7 @@ exports.show_all = async (req, res, next) => {
 		let filter;
 		let start, limitation;
 		let sort;
+		const select = req.query.select
 
 		if(req.query.range != undefined){
 			const range  = await handleRange(req.query.range);
@@ -94,7 +95,7 @@ exports.show_all = async (req, res, next) => {
 		}
 		
 		
-		Report.find(filter).sort(sort).skip(start).limit(limitation).exec(
+		Report.find(filter).select(select).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
 				res.json(results)
 			})
