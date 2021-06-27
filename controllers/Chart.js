@@ -7,7 +7,7 @@ const Institution = require('../models/institution.js')
 
 exports.get_ten = async (req, res, next) => {
 	let data = []
-	const institutions = await Institution.find({},'name').limit(5).exec()
+	const institutions = await Institution.find({},'name').limit().exec()
 	const findYearReportCount = async () => {
 		let count = [];
 		for(let _a = 0; _a < institutions.length; _a++){

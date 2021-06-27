@@ -24,7 +24,7 @@ const reportGroupSchema = new Schema({
 const ReportSemesterSchema = new Schema({
 	
 	author: {type: Schema.Types.ObjectId, ref:'User', required: true},
-	date: {type: Date, default: Date.now},
+	date: {type: Date},
 	institution:{type: Schema.Types.ObjectId, ref:'Institution', required: true},
 	report: reportGroupSchema ,
 	validated: {type: Boolean, default: false},

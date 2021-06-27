@@ -37,12 +37,12 @@ const checkIfReminderExist = (author, date) => {
 	let inputMonth = inputDate.getMonth()
 	let inputYear = inputDate.getFullYear()
 
-	if(inputMonth < 7){
-		inputMonthMin = 1
-		inputMonthMax = 6
-	}else if (inputMonth >= 7){
-		inputMonthMin = 7
-		inputMonthMax = 12
+	if(inputMonth < 6){
+		inputMonthMin = 0
+		inputMonthMax = 5
+	}else if (inputMonth >= 6){
+		inputMonthMin = 6
+		inputMonthMax = 11
 	}
 
 	debug('inputMonthMax :  %O',inputMonthMax)
@@ -51,6 +51,8 @@ const checkIfReminderExist = (author, date) => {
 	debug(`Notification.findOne({ remind_date: { $gte: ${inputYear}-${inputMonthMin}-01, $lte: ${inputYear}-${inputMonthMax}-31 }, remindee: ${author}, report_type : 'yearly' })`)
 	return Notification.findOne({ remind_date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, remindee: author, report_type : 'yearly' })
 }
+
+
 
 exports.set_header = (req, res, next) =>{
 	Report.countDocuments().exec((err, results) => {
@@ -298,16 +300,14 @@ exports.create = [
 		debug(req.body)
 		const error = validationResult(req)
 		if(!error.isEmpty()){
-			debug(error)
-			throw new Error();
-		}else{
-		
+			debug("Error : %O",error.errors)
+			throw new Error()
+		}else{	
 		const newFileInput = await addEmptyFilePropertyToBody(req.body.report)
 		debug('New File Input : %O',newFileInput)
 
 		const report = new Report({
 			author: req.body.author,
-			area: req.body.area,
 			totalSDM: req.body.totalSDM,
 			institution: req.body.institution,
 			year: req.body.year,
@@ -580,24 +580,25 @@ exports.create = [
 ]
 
 exports.update = [
-	body('author'),
-	body('total', "total").trim().isLength({min:1}).isNumeric(),
-	body('area',"area").trim().isLength({min:1}).isNumeric(),
-	body('year',"year").toDate().optional({ checkFalsy: true }).isISO8601(),
+	body('author').trim().escape().isLength({min:1}),
+	body('totalSDM').trim().isLength({min:1}).isNumeric(),
+	body('Institution'),
+	body('year').toDate().optional({ checkFalsy: true }).isISO8601(),
 
-	(req, res, next) => {
+	async (req, res, next) => {
 		// debug(req.body)
-		debug(req.body.year)
+		debug("Validated status : %o",req.body.validated)
 		const error = validationResult(req)
 		if(!error.isEmpty()){
-			debug(error.errors)
+			debug("Error : %O",error.errors)
 			throw new Error();
 		}else{
-			
+		const newFileInput = await addEmptyFilePropertyToBody(req.body.report)
+		debug('New File Input : %O',newFileInput)
+
 		const report = new Report({
 			_id : req.params.id,
 			author: req.body.author,
-			area: req.body.area,
 			totalSDM: req.body.totalSDM,
 			institution: req.body.institution,
 			year: req.body.year,

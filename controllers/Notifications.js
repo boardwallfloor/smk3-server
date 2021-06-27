@@ -58,6 +58,23 @@ const findReportSemesterQuery = (inputYear, inputMonth, inputRemindee) => {
 	return reportSemester.findOne({ date: { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }, author: inputRemindee })
 }
 
+const checkDateIfPast = (date) =>{
+	const currentDate = new Date()
+	debug("Checking Year")
+	if(currentDate.getFullYear() < date.getFullYear()){
+		return false
+	}
+	debug("Checking Month")
+	if(currentDate.getMonth() < date.getMonth()){
+		return false
+	}
+	debug("Checking Days")
+	if(currentDate.getDay() < date.getDay()){
+		return false
+	}
+	return true
+}
+
 
 exports.set_header = (req, res, next) =>{
 	Notification.countDocuments().exec((err, results) => {
@@ -179,6 +196,13 @@ exports.create = [
 			const inputDateYear = req.body.remind_date.getFullYear()
 			const inputDateMonth = req.body.remind_date.getMonth()
 			const inputRemindee = req.body.remindee
+			const dateExpirationStatus = await checkDateIfPast(req.body.remind_date)
+			debug("dateExpirationStatus : %o", dateExpirationStatus)
+			if(dateExpirationStatus){
+				res.status(400).json({
+				   message: 'Target date is invalid',
+				});
+			}
 			if(req.body.report_type === 'yearly'){
 				const result = await findReportYearQuery(inputDateYear, inputRemindee)
 				debug('Data query result %O',result)
@@ -215,8 +239,8 @@ exports.create = [
 					Notification.findById(results._id).populate('remindee').exec(async (err, data) => {
 						if(err){return next(err);}
 						debug('Data : %O', data);
-						debug('Results : %O', results);
-						// await cronjob.startSchedule(data);
+						// debug('Results : %O', results);
+						await cronjob.startSchedule(data);
 					})
 					res.send(results);
 				})

@@ -36,11 +36,11 @@ const checkIfReminderExist = (author, date) => {
 	let inputMonth = inputDate.getMonth()
 	let inputYear = inputDate.getFullYear()
 
-	if(inputMonth < 7){
+	if(inputMonth < 6){
 		inputMonthMin = 1
-		inputMonthMax = 6
-	}else if (inputMonth >= 7){
-		inputMonthMin = 7
+		inputMonthMax = 5
+	}else if (inputMonth >= 6){
+		inputMonthMin = 6
 		inputMonthMax = 12
 	}
 
@@ -121,7 +121,7 @@ exports.show_ten = async (req, res, next) => {
 	}			
 	async.parallel({
 		data: (callback) => {
-			Report.find(filter).populate('author').sort({'date':'desc'}).limit(10).exec(callback)
+			Report.find(filter).populate('author').populate('institution').sort({'date':'desc'}).limit(10).exec(callback)
 		},
 		count: (callback) => {
 			Report.countDocuments(filter).exec(callback)
@@ -260,10 +260,10 @@ exports.update = [
 
 	async (req, res, next) => {
 		const error = validationResult(req)
-		debug('test')
+		debug('Input date : %o', req.body.date)
 		debug(error)
 		if(!error.isEmpty()){
-			throw new Error("Error : ");
+			throw new Error("Error : ")
 		}else{
 			const newFileInput = await addEmptyFilePropertyToBody(req.body.report)
 			// const newFileInput = req.body.report

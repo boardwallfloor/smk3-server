@@ -243,8 +243,9 @@ exports.create = [
 
 exports.login = function (req, res, next) {
     passport.authenticate('local', {session: false}, (err, user, info) => {
+    	debug(user)
         if (err || !user) {
-        	debug(typeof info.msg)
+        	debug(req.session)
             return res.status(400).json({
                 message: info.msg,
                 user   : user,
@@ -263,7 +264,7 @@ exports.login = function (req, res, next) {
 exports.checkAuth = (req, res, next) => {
 	// debug(req.headers)
 	passport.authenticate('jwt', { session: false }, (err,user) => {
-		debug('test1')
+		debug(user)
 		if (err || !user) {
             return res.status(400).json({
                 message: 'Something is not right',

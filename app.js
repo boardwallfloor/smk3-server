@@ -7,6 +7,7 @@ const passport = require('passport');
 const session = require('express-session')
 const cors = require('cors');
 const debug = require('debug')('server');
+// const MongoStore = require('connect-mongo')
 require('dotenv').config();
 
 const initiliazePassport = require('./config/passport')
@@ -32,7 +33,7 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 //Middleware
 var app = express();
 const corsOptions = {
-  origin: ['http://localhost:3000','http://192.168.2.11:3000'],
+  origin: ['http://localhost:3000',' http://192.168.0.8:3000'],
   credentials: true,
   exposedHeaders: ['Content-Range'],
 }
@@ -47,12 +48,16 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-debug('test')
 app.use(express.static(path.join(__dirname, '/tmp')));
+// const options = {mongooseConnection : mongoose.connection, mongoUrl: MongoDB}
 app.use(session({
 	secret: `${process.env.SS_SECRET}`,
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: false,
+	// store: MongoStore.create(options),
+	// cookie: {maxAge : 1 * 10000},
+	
+
 }))
 app.use(passport.initialize());
 app.use(passport.session());
