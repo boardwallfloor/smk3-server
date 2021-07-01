@@ -13,8 +13,28 @@ exports.set_header = (req, res, next) =>{
 		next();
 		})
 	}
+const handleFilter = (filter) => {
+		const filterJson = JSON.parse(filter)
+		return filterJson;
+	}
 
-exports.show_all = (req, res, next) => {
+const handleRange = (range) => {
+	const rangeJson = JSON.parse(range)
+	const [start, end] = rangeJson;
+	const limitation = end-start+1;
+	return [start,limitation];
+}
+
+const handleSort = (sort) => {
+	const sortJson = JSON.parse(sort)
+	const [resource, order] = sortJson;
+	const orderLowerCase = order.toLowerCase()
+	return sortOn={
+		[resource]: [orderLowerCase]
+	}
+}
+
+exports.show_all = async(req, res, next) => {
 	debug(Object.keys(req.query).length)
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
@@ -27,29 +47,27 @@ exports.show_all = (req, res, next) => {
 		)	
 
 	}else{
-		debug(req.query);
-		let filter={};
-		let range={}, start, end, limitation;
-		let sort={}, orderLowerCase, sortOn={};
-		if(req.query.filter != undefined){
-		filter = JSON.parse(req.query.filter)
-		}
+		debug("Query :");
+		debug(req.query)
+		let filter;
+		let start, limitation;
+		let sort;
+		const select = req.query.select
 		if(req.query.range != undefined){
-		range = JSON.parse(req.query.range)
-		[start, end] = range;
+			const range  = await handleRange(req.query.range);
+			[start, limitation] = range;
 		}
+
+		if(req.query.filter != undefined){
+			filter = await handleFilter(req.query.filter);
+		}
+
 		if(req.query.sort != undefined) {
-		sort = JSON.parse(req.query.sort)
-		debug(sort);
-		const [resource, order] = sort;
-		orderLowerCase = order.toLowerCase()
-		sortOn={
-			[resource]: [orderLowerCase]
-		}
+			sort = handleSort(req.query.sort);
 		}
 		// debug(start, end)
 		
-		Institution.find(filter).sort(sortOn).skip(start).limit(end-start+1).exec(
+		Institution.find(filter).select(select).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
 				res.json(results)
 			})

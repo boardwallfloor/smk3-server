@@ -284,6 +284,7 @@ exports.reportsSemesterAllToExcel = (reportSemester, res, length) => {
   let row = 3
   debug(length)
   for(let _a=0; _a < length; _a++){
+    debug(`reportSemester${_a}`)
     ws.cell(row, 1).string(reportSemester[_a].author.full_name)
     // Date input
     ws.cell(row, 2).string(moment(reportSemester[_a].date).format('LL'))
@@ -294,10 +295,11 @@ exports.reportsSemesterAllToExcel = (reportSemester, res, length) => {
 
     // report group
     const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
-    for(let _a = 0; _a < questionList.length; _a++){
-      const calc = 5 + (_a * 2);
-      ws.cell(row, calc).number(reportSemester[_a].report[questionList[_a]].total)
-      ws.cell(row, calc+1).string(undefinedToEmptySpace(reportSemester[_a].report[questionList[_a]].detail))
+    for(let _b = 0; _b < questionList.length; _b++){
+      const calc = 5 + (_b * 2);
+      // debug("questionList : %o",questionList[_a])
+      ws.cell(row, calc).number(reportSemester[_a].report[questionList[_b]].total)
+      ws.cell(row, calc+1).string(undefinedToEmptySpace(reportSemester[_a].report[questionList[_b]].detail))
     }
     row++
   }

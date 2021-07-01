@@ -4,7 +4,10 @@ const { body, validationResult } = require('express-validator');
 
 const Report = require('../models/report_semester')
 const Notification = require('../models/notification');
+const User = require('../models/user');
 const exportFile = require('../config/generateExcel/generateExcel')
+
+const moment = require('moment')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -381,7 +384,7 @@ exports.export =  (req, res, next) => {
 }
 
 
-exports.exportall =  (req, res, next) => {
+exports.exportall =  async(req, res, next) => {
 	let excludedFileList = '';
 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8']
 	for(let a = 0; a < questionList.length; a++){
@@ -390,15 +393,58 @@ exports.exportall =  (req, res, next) => {
 			excludedFileList += ' '
 		}
 	}
-	debug(excludedFileList)
-	debug(req.params)
-	Report.find().select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
+	// debug(excludedFileList)
+	debug("Query : %O",req.query);
+	let filter;
+
+	if(req.query.filter !== undefined){
+		//handle date, institution
+		filter = await handleFilter(req.query.filter)
+		debug("filter in Json : %o",filter)
+		if(filter.hasOwnProperty('username')){
+		debug("Query username : %o",filter.username)
+			const results = await User.find({username: filter.username}).select("_id").exec()
+			debug("User id : %o",results)
+			filter.author = results[0]._id
+			delete filter.username
+		}
+		if(filter.hasOwnProperty('date')){
+			debug("Input Date : %o",filter.date)
+			let inputMonthMin, inputMonthMax
+			
+			let inputDate = new Date(filter.date)
+			debug('inputDate : %O',inputDate)
+			let inputMonth = inputDate.getMonth()
+			let inputYear = inputDate.getFullYear()
+
+			if(inputMonth < 7){
+				inputMonthMin = 1;
+				inputMonthMax = 6;
+				debug("Semester : Ganjil")
+			}else if (inputMonth >= 7){
+				inputMonthMin = 7
+				inputMonthMax = 12
+				debug("Semester : Genap")
+			}
+			debug("inputMonthMin : %o",inputMonthMin)
+			debug("inputMonthMax : %o",inputMonthMax)
+			debug("Date in moment : %o",moment(filter.date).format('MMMM Do YYYY'))
+			filter.date = { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }
+		}
+		if(filter.hasOwnProperty('institution')){
+			
+		}
+	}
+	debug("Filter used : %o",filter)
+	Report.find(filter).select(excludedFileList).populate('institution','name').populate('author','full_name').exec(
 		async (err, results) =>{
 			if(err){return next(err);}
 			debug(results);
 			debug('Generating file')
-			await exportFile.reportsSemesterAllToExcel(results, res, results.length)
+			// await exportFile.reportsSemesterAllToExcel(results, res, results.length)
+			res.json(results)
 		}
-		)
-}
+	)
 
+	
+}

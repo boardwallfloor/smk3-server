@@ -40,7 +40,7 @@ const dateToSemester = (date) => {
 }
 
 const findReportYearQuery = (inputDate, inputRemindee) => {
-	return reportYear.findOne({ year: { $gte: `${inputDate}-1-01`, $lte: `${inputDate}-12-31` }, author: inputRemindee })
+	return reportYear.findOne({ year: { $gte: `${inputDate}-00-01`, $lte: `${inputDate}-12-31` }, author: inputRemindee })
 }
 
 const findReportSemesterQuery = (inputYear, inputMonth, inputRemindee) => {
@@ -99,9 +99,10 @@ exports.show_all = async (req, res, next) => {
 	}else{
 		debug("Query :");
 		debug(req.query)
-		let filter={};
+		let filter
 		let start, limitation;
 		let sort;
+		const select = req.query.select
 
 		if(req.query.range != undefined){
 			const range  = await handleRange(req.query.range);
@@ -117,7 +118,7 @@ exports.show_all = async (req, res, next) => {
 		}
 		debug(sort)
 
-		Notification.find(filter).sort(sort).skip(start).limit(limitation).exec(
+		Notification.find(filter).select(select).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
 				res.json(results)
 			})

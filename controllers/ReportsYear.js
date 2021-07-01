@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const Report = require('../models/report_year')
 const ReportSemester = require('../models/report_semester')
 const Notification = require('../models/notification');
+const User = require('../models/user');
 const exportFile = require('../config/generateExcel/generateExcel')
 
 const handleFilter = (filter) => {
@@ -903,7 +904,7 @@ exports.export = (req, res, next) => {
 		)
 }
 
-exports.exportall = (req, res, next) => {
+exports.exportall = async(req, res, next) => {
 
 	let excludedFileList = '';
 	const questionList = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11']
@@ -922,6 +923,17 @@ exports.exportall = (req, res, next) => {
 			excludedFileList += ' '
 			}
 		}
+	}
+	debug("Query : %O",req.query);
+	let filter;
+
+	if(req.query.filter != undefined){
+		filter = await handleFilter(req.query.filter)
+		debug("filter in Json : %o",filter)
+
+		const results = await User.find({username: filter.username}).select("_id").exec()
+		filter.author = results[0]._id
+		delete filter.username
 	}
 
 	debug(excludedFileList)
