@@ -7,8 +7,6 @@ const Notification = require('../models/notification');
 const User = require('../models/user');
 const exportFile = require('../config/generateExcel/generateExcel')
 
-const moment = require('moment')
-
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
 		return filterJson;
@@ -410,26 +408,29 @@ exports.exportall =  async(req, res, next) => {
 		}
 		if(filter.hasOwnProperty('date')){
 			debug("Input Date : %o",filter.date)
+			const [queryDateStart, queryDateEnd] = filter.date
 			let inputMonthMin, inputMonthMax
 			
-			let inputDate = new Date(filter.date)
-			debug('inputDate : %O',inputDate)
-			let inputMonth = inputDate.getMonth()
-			let inputYear = inputDate.getFullYear()
+			dateStart = new Date(queryDateStart)
+			dateEnd = new Date(queryDateEnd)
 
-			if(inputMonth < 7){
-				inputMonthMin = 1;
-				inputMonthMax = 6;
-				debug("Semester : Ganjil")
-			}else if (inputMonth >= 7){
-				inputMonthMin = 7
-				inputMonthMax = 12
-				debug("Semester : Genap")
+			debug('dateStart : %o',dateStart)
+			debug('dateEnd : %o',dateEnd)
+
+			const dateStartObject = {
+				year: dateStart.getFullYear(),
+				month: dateStart.getMonth(),
+				date: dateStart.getDay()
 			}
-			debug("inputMonthMin : %o",inputMonthMin)
-			debug("inputMonthMax : %o",inputMonthMax)
-			debug("Date in moment : %o",moment(filter.date).format('MMMM Do YYYY'))
-			filter.date = { $gte: `${inputYear}-${inputMonthMin}-01`, $lte: `${inputYear}-${inputMonthMax}-31` }
+			const dateEndObject = {
+				year: dateEnd.getFullYear(),
+				month: dateEnd.getMonth(),
+				date: dateEnd.getDay()
+			}
+
+			debug("dateStartObject : %o",dateStartObject)
+			debug("dateEndObject : %o",dateEndObject)
+			filter.date = { $gte: `${dateStartObject.year}-${dateStartObject.month}-${dateStartObject.date}`, $lte: `${dateEndObject.year}-${dateEndObject.month}-${dateEndObject.date}` }
 		}
 		if(filter.hasOwnProperty('institution')){
 			
@@ -441,8 +442,8 @@ exports.exportall =  async(req, res, next) => {
 			if(err){return next(err);}
 			debug(results);
 			debug('Generating file')
-			// await exportFile.reportsSemesterAllToExcel(results, res, results.length)
-			res.json(results)
+			await exportFile.reportsSemesterAllToExcel(results, res, results.length)
+			// res.json(results)
 		}
 	)
 

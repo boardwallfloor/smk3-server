@@ -314,7 +314,9 @@ exports.export = (req, res, next) => {
 		)
 }
 
-exports.exportall = (req, res, next) => {
+exports.exportall = async(req, res, next) => {
+	filter = await handleFilter(req.query.filter)
+	debug("filter in Json : %o",filter)
 
 	Notification.find().populate('remindee','full_name').exec(
 		async (err, results) =>{
