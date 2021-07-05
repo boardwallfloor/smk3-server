@@ -79,7 +79,7 @@ app.use('/reportsemester',
 	passport.authenticate('jwt', {session: false}), 
 	reportSemesterlyRoutes);
 app.use('/institution', 
-// 	passport.authenticate('jwt', {session: false}), 
+	passport.authenticate('jwt', {session: false}), 
 	institutionRoutes);
 app.use('/notif', 
 	passport.authenticate('jwt', {session: false}), 
