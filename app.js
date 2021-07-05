@@ -62,7 +62,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+//Welcome
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/welcome.html'))
+})
 //Routes Middleware
 app.use('/auth', authRoutes);
 app.use('/user',
