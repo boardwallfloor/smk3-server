@@ -161,7 +161,7 @@ Project Link: [https://github.com/boardwallfloor/smk3-server](https://github.com
 [stars-url]: https://github.com/boardwallfloor/smk3-server/stargazers
 [issues-shield]: https://img.shields.io/github/issues/boardwallfloor/smk3-server.svg?style=for-the-badge
 [issues-url]: https://github.com/boardwallfloor/smk3-server/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/smk3-server.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/boardwallfloor/smk3-server.svg?style=for-the-badge
 [license-url]: https://github.com/boardwallfloor/smk3-server/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/faris-t-05b348187
