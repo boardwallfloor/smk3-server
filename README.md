@@ -20,7 +20,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/boardwallfloor/smk3-server">
-    <img src="https://imgur.com/a/kdKdv0n" alt="SMK3" width="80" height="80">
+    <img src="https://i.imgur.com/nZUc8av.png" alt="SMK3" width="280" height="180">
   </a>
 
   <h3 align="center">SMK3 Server</h3>
