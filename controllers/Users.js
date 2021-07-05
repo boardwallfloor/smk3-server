@@ -1,14 +1,77 @@
 const async = require('async')
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
-
 const debug = require('debug')('Users')
-
 const passport = require('passport')
 const jwt = require('jsonwebtoken');
 
-
 const User = require('../models/user')
+
+exports.sendCookie = (req, res, next) => {
+	// res.cookie('name', 'tobi', { domain: '.example.com', path: '/admin', secure: true }).send()
+	res
+        .cookie('jwt',
+            token, {
+                httpOnly: true,
+                secure: false //--> SET TO TRUE ON PRODUCTION
+            }
+        )
+        .status(200)
+        .json({
+            message: 'You have logged in :D'
+        })
+}
+//Authentication
+
+exports.login = function (req, res, next) {
+	debug("Req : %o",req.params)
+	debug("Req : %o",req.body)
+	// debug("Res : %o",res)
+    passport.authenticate('local', {session: false}, (err, user, info) => {
+    	debug(user)
+        if (err || !user) {
+        	debug(req.session)
+            return res.status(400).json({
+                message: info.msg,
+                user   : user,
+            });
+        }       req.login(user, {session: false}, (err) => {
+       if (err) {
+           res.send(err);
+       }           
+       // generate a signed son web token with the contents of user object and return it in the response           
+       const token = jwt.sign(user.toJSON(), `${process.env.JWT_SECRET}`);
+       // debug("Token : %o",token)T
+       return res.cookie('jwt',
+            token, {
+                httpOnly: true,
+                secure: false //--> SET TO TRUE ON PRODUCTION
+            }
+        )
+        .status(200)
+        .json(token)
+           // return res.json(token);
+        });
+    })(req, res, next);
+}
+
+
+
+
+exports.checkAuth = (req, res, next) => {
+	debug("checkAuth Header : %o",req.headers)
+	passport.authenticate('jwt', { session: false }, (err,user) => {
+		debug(user)
+		if (err || !user) {
+            return res.status(400).json({
+                message: 'Something is not right',
+                user   : user
+            });
+        } 
+		if(err){return new Error (err)};
+		res.send(user);
+	})(req, res, next);
+}
 
 exports.set_header = (req, res, next) =>{
 		User.countDocuments().exec((err, results) => {
@@ -58,6 +121,7 @@ exports.show_all = async (req, res, next) => {
 		let filter;
 		let start, limitation;
 		let sort;
+		const select = req.query.select
 
 		if(req.query.range != undefined){
 			const range  = await handleRange(req.query.range);
@@ -72,7 +136,7 @@ exports.show_all = async (req, res, next) => {
 			sort = handleSort(req.query.sort);
 		}
 		
-		User.find(filter).sort(sort).skip(start).limit(limitation).exec(
+		User.find(filter).select(select).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
 				// debug(results)
 				res.json(results)
@@ -239,39 +303,4 @@ exports.create = [
 ]
 
 
-//Authentication
 
-exports.login = function (req, res, next) {
-    passport.authenticate('local', {session: false}, (err, user, info) => {
-    	debug(user)
-        if (err || !user) {
-        	debug(req.session)
-            return res.status(400).json({
-                message: info.msg,
-                user   : user,
-            });
-        }       req.login(user, {session: false}, (err) => {
-           if (err) {
-               res.send(err);
-           }           // generate a signed son web token with the contents of user object and return it in the response           
-           const token = jwt.sign(user.toJSON(), `${process.env.JWT_SECRET}`);
-           return res.json(token);
-        });
-    })(req, res, next);
-}
-
-
-exports.checkAuth = (req, res, next) => {
-	// debug(req.headers)
-	passport.authenticate('jwt', { session: false }, (err,user) => {
-		debug(user)
-		if (err || !user) {
-            return res.status(400).json({
-                message: 'Something is not right',
-                user   : user
-            });
-        } 
-		if(err){return new Error (err)};
-		res.send(user);
-	})(req, res, next);
-}

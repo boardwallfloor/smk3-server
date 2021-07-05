@@ -8,6 +8,7 @@ const Notification = require('../models/notification');
 const reportYear = require('../models/report_year');
 const reportSemester = require('../models/report_semester');
 const exportFile = require('../config/generateExcel/generateExcel')
+const User = require('../models/user')
 
 const handleFilter = (filter) => {
 		const filterJson = JSON.parse(filter)
@@ -114,9 +115,10 @@ exports.show_all = async (req, res, next) => {
 		}
 
 		if(req.query.sort != undefined) {
+			debug("Sort : %o",req.query.sort)
 			sort = handleSort(req.query.sort);
+		 	debug(sort)
 		}
-		debug(sort)
 
 		Notification.find(filter).select(select).sort(sort).skip(start).limit(limitation).exec(
 			(err, results) =>{
@@ -194,57 +196,65 @@ exports.create = [
 		}else{
 			debug(req.body.remind_date)
 			let isReportExist = false;
+			let isDateValid = true;
 			const inputDateYear = req.body.remind_date.getFullYear()
 			const inputDateMonth = req.body.remind_date.getMonth()
 			const inputRemindee = req.body.remindee
 			const dateExpirationStatus = await checkDateIfPast(req.body.remind_date)
 			debug("dateExpirationStatus : %o", dateExpirationStatus)
 			if(dateExpirationStatus){
+				isDateValid = false
 				res.status(400).json({
-				   message: 'Target date is invalid',
+				   message: 'Target date is invalid / out of date',
 				});
 			}
-			if(req.body.report_type === 'yearly'){
-				const result = await findReportYearQuery(inputDateYear, inputRemindee)
-				debug('Data query result %O',result)
-				if(result){
-					isReportExist = true
+			if(isDateValid){
+				if(req.body.report_type === 'yearly'){
+					const result = await findReportYearQuery(inputDateYear, inputRemindee)
+					debug('Data query result %O',result)
+					if(result){
+						isReportExist = true
+					}
 				}
-			}
-			if(req.body.report_type === 'semesterly'){
-				const result = await findReportSemesterQuery( inputDateYear, inputDateMonth, inputRemindee)
-				debug('Data query result %O',result)
-				if(result){
-					isReportExist = true
+				if(req.body.report_type === 'semesterly'){
+					const result = await findReportSemesterQuery( inputDateYear, inputDateMonth, inputRemindee)
+					debug('Data query result %O',result)
+					if(result){
+						isReportExist = true
+					}
 				}
-			}
-			debug('Exist status %O',isReportExist)
-			if(isReportExist){
-				res.status(400).json({
-				   message: 'Data already exist',
-				});
-			}
-			if(!isReportExist){
-				debug('Report not found, creating reminder')
-				const notification = new Notification({
-					notification_status: req.body.notification_status,
-					remindee: req.body.remindee,
-					remind_date: req.body.remind_date,
-					report_type: req.body.report_type,
-				})
-				// debug(institution);
-				Notification.create(notification, async (err, results) =>{
-					if(err){return next(err);}
-					// debug("Notification created and saved")
-					// debug(results)
-					Notification.findById(results._id).populate('remindee').exec(async (err, data) => {
-						if(err){return next(err);}
-						debug('Data : %O', data);
-						// debug('Results : %O', results);
-						await cronjob.startSchedule(data);
+				debug('Exist status %O',isReportExist)
+				if(isReportExist){
+					res.status(400).send({
+					   message: 'Data already exist',
+					});
+				}
+				if(!isReportExist){
+					debug('Report not found, creating reminder')
+					
+					const userInstitutionId = await User.findById(req.body.remindee).select('user_institution').exec()
+					debug("Institution ID : %o",userInstitutionId)
+					const notification = new Notification({
+						notification_status: req.body.notification_status,
+						remindee: req.body.remindee,
+						remind_date: req.body.remind_date,
+						report_type: req.body.report_type,
+						institution: userInstitutionId.user_institution
 					})
-					res.send(results);
-				})
+					// debug(institution);
+					Notification.create(notification, async (err, results) =>{
+						if(err){return next(err);}
+						// debug("Notification created and saved")
+						// debug(results)
+						Notification.findById(results._id).populate('remindee').exec(async (err, data) => {
+							if(err){return next(err);}
+							debug('Data : %O', data);
+							// debug('Results : %O', results);
+							await cronjob.startSchedule(data);
+						})
+						res.send(results);
+					})
+				}
 			}
 		}
 	}
@@ -257,18 +267,20 @@ exports.update = [
 	body('remind_date').toDate().optional({ checkFalsy: true }).isISO8601(),
 	body('report_type'),
 	
-	(req, res, next) => {
+	async (req, res, next) => {
 		const error = validationResult(req);
 
 		if(!error.isEmpty()){
 			throw new Error("Error : ");
 		}else{
+			const userInstitutionId = await User.findById(req.body.remindee).select('user_institution').exec()
 			const notification = new Notification({
-				_id: req.params.id,
+				_id : req.params.id,
 				notification_status: req.body.notification_status,
 				remindee: req.body.remindee,
 				remind_date: req.body.remind_date,
 				report_type: req.body.report_type,
+				institution: userInstitutionId.user_institution
 			})
 			// debug(report)
 			Notification.findByIdAndUpdate(req.params.id, notification, (err, results) =>{

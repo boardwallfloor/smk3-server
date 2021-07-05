@@ -33,7 +33,7 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 //Middleware
 var app = express();
 const corsOptions = {
-  origin: ['http://localhost:3000',' http://192.168.0.8:3000'],
+  origin: ['http://localhost:3000',' http://192.168.0.3:3000'],
   credentials: true,
   exposedHeaders: ['Content-Range'],
 }
@@ -65,12 +65,26 @@ app.use(passport.session());
 
 //Routes Middleware
 app.use('/auth', authRoutes);
-app.use('/user', userRoutes);
-app.use('/reportyear', reportYearlyRoutes);
-app.use('/reportsemester', reportSemesterlyRoutes);
-app.use('/institution', institutionRoutes);
-app.use('/notif', notificationRoutes);
-app.use('/chart', chartRoutes);
+app.use('/user',
+	passport.authenticate('jwt', {session: false}), 
+	userRoutes);
+// app.use('/user', userRoutes);
+app.use('/reportyear', 
+	passport.authenticate('jwt', {session: false}), 
+	reportYearlyRoutes);
+app.use('/reportsemester', 
+	passport.authenticate('jwt', {session: false}), 
+	reportSemesterlyRoutes);
+app.use('/institution', 
+	passport.authenticate('jwt', {session: false}), 
+	institutionRoutes);
+app.use('/notif', 
+	passport.authenticate('jwt', {session: false}), 
+	notificationRoutes);
+app.use('/chart', 
+	passport.authenticate('jwt', {session: false}), 
+	chartRoutes);
+
 
 console.log("Server running at port 9000");
 

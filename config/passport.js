@@ -57,34 +57,30 @@ function initialize(passport) {
         )
 }
 
-	const jwtAuthentication = () => {
-		passport.use(new JWTStrategy({
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey   : `${process.env.JWT_SECRET}`
-	    },
-	    async (jwtPayload, cb) => {
+const jwtAuthentication = () => {
 
-	    	//TODO: figure out on how to make jwtpayload into object
-	    	debug(typeof jwtPayload)
-	    	const json = await JSON.parse(jwtPayload);
-	    	async.series({
-	    		user : (callback) => {
-	    			User.findById(json._id).exec(callback)
-	    		}
-	    	},(err, results) => {
-	    		console.log(results)
-	    		return cb(null, results);
-	    	})
-	        return User.findById(jwtPayload._id)
-	            .then(user => {
-	            	// console.log(user)
-	                return cb(null, user);
-	            })
-	            .catch(err => {
-	                return cb(err);
-	            });
-	    }
-	));
-	}
+	passport.use(new JWTStrategy({
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey   : `${process.env.JWT_SECRET}`
+    },
+    async (jwtPayload, cb) => {
+
+    	//TODO: figure out on how to make jwtpayload into object
+    	debug("Payload %O",jwtPayload)
+        debug(typeof jwtPayload)
+    	// const json = await JSON.parse(jwtPayload);
+        const json = jwtPayload;
+
+        return User.findById(jwtPayload._id)
+            .then(user => {
+            	// console.log(user)
+                return cb(null, user);
+            })
+            .catch(err => {
+                return cb(err);
+            });
+    }
+));
+}
 
 module.exports = {initialize, jwtAuthentication};

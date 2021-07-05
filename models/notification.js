@@ -7,6 +7,7 @@ const NotificationSchema = new Schema({
 	remindee: {type: Schema.Types.ObjectId, ref:'User', required: true},
 	remind_date: {type: Date, required: true},
 	report_type: {type: String, required:true, enum:['yearly','semesterly']},
+	institution: {type: Schema.Types.ObjectId, ref:'Institution', required: true}
 
 },{ timestamps: { createdAt: 'created_at' } })
 

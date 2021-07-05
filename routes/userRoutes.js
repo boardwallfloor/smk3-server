@@ -3,6 +3,7 @@ var router = express.Router();
 
 const user_controller = require('../controllers/Users');
 
+router.get('/cookie', user_controller.sendCookie)
 router.use(user_controller.set_header)
 router.get('/db', user_controller.show_ten);
 router.get('/', user_controller.show_all);

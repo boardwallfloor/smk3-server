@@ -36,6 +36,8 @@ const handleSort = (sort) => {
 
 exports.show_all = async(req, res, next) => {
 	debug(Object.keys(req.query).length)
+	debug(req.headers.authorization)
+	// debug("Auth? : %o",fromHeader(header_name))
 	if(Object.keys(req.query).length === 0){
 		debug("No query")
 		Institution.find({}).exec(
