@@ -130,7 +130,7 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-
+You can check api endpoints by clicking [here](http://smk3-ugm.herokuapp.com/)
 
 <!-- _For more examples, please refer to the [Documentation](https://example.com)_ -->
 
