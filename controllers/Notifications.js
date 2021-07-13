@@ -205,7 +205,7 @@ exports.create = [
 			if(dateExpirationStatus){
 				isDateValid = false
 				res.status(400).json({
-				   message: 'Target date is invalid / out of date',
+				   message: 'Tanggal sudah terlewati, gunakan tanggal yang belum terlewati untuk membuat pengingat',
 				});
 			}
 			if(isDateValid){
@@ -226,7 +226,7 @@ exports.create = [
 				debug('Exist status %O',isReportExist)
 				if(isReportExist){
 					res.status(400).send({
-					   message: 'Data already exist',
+					   message: `Laporan oleh ${inputRemindee} pada rentang tanggal yang dikirim telah ada. Notifikasi tidak dapat dibuat`,
 					});
 				}
 				if(!isReportExist){
