@@ -33,7 +33,7 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 //Middleware
 var app = express();
 const corsOptions = {
-  origin: ['https://romantic-minsky-edb781.netlify.app'],
+  origin: ['https://romantic-minsky-edb781.netlify.app',`${process.env.CLIENT_DOMAIN}`],
   credentials: true,
   exposedHeaders: ['Content-Range'],
 }
