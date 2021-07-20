@@ -33,7 +33,7 @@ db.on('error',console.error.bind(console, 'Mongo connection ERROR : '));
 //Middleware
 var app = express();
 const corsOptions = {
-  origin: ['https://smk3-ugm.netlify.app',`${process.env.CLIENT_DOMAIN}`],
+  origin: ['https://smk3-ugm.netlify.app',`${process.env.CLIENT_DOMAIN}`,'https://smk3-ugm.herokuapp.com/reportsemester'],
   credentials: true,
   exposedHeaders: ['Content-Range'],
 }
