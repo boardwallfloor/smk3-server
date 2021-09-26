@@ -73,10 +73,10 @@ app.use('/user',
 	userRoutes);
 // app.use('/user', userRoutes);
 app.use('/reportyear', 
-	passport.authenticate('jwt', {session: false}), 
+	// passport.authenticate('jwt', {session: false}), 
 	reportYearlyRoutes);
 app.use('/reportsemester', 
-	passport.authenticate('jwt', {session: false}), 
+	// passport.authenticate('jwt', {session: false}), 
 	reportSemesterlyRoutes);
 app.use('/institution', 
 	passport.authenticate('jwt', {session: false}), 
