@@ -1,34 +1,34 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const questionSchema = new Schema({
-	total: {type: Number, required: true, default:0},
-	file: {
-		src:{type: String},
-		title:{type: String},
-	},
-	detail: {type: String, max: 300},
-},{ _id : false })
+  total: { type: Number, required: true, default: 0 },
+  file: {
+    src: { type: String },
+    title: { type: String }
+  },
+  detail: { type: String, max: 300 },
+  comment: { type: String, max: 300 }
+}, { _id: false })
 
 const reportGroupSchema = new Schema({
-	question1: questionSchema,
-	question2: questionSchema,
-	question3: questionSchema,
-	question4: questionSchema,
-	question5: questionSchema,
-	question6: questionSchema,
-	question7: questionSchema,
-	question8: questionSchema,
-},{ _id : false })
+  question1: questionSchema,
+  question2: questionSchema,
+  question3: questionSchema,
+  question4: questionSchema,
+  question5: questionSchema,
+  question6: questionSchema,
+  question7: questionSchema,
+  question8: questionSchema
+}, { _id: false })
 
 const ReportSemesterSchema = new Schema({
-	
-	author: {type: Schema.Types.ObjectId, ref:'User', required: true},
-	date: {type: Date},
-	institution:{type: Schema.Types.ObjectId, ref:'Institution', required: true},
-	report: reportGroupSchema ,
-	validated: {type: Boolean, default: false},
-},{ timestamps: { createdAt: 'created_at' } })
 
+  author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  date: { type: Date },
+  institution: { type: Schema.Types.ObjectId, ref: 'Institution', required: true },
+  report: reportGroupSchema,
+  validated: { type: String, enum: ['Tervalidasi', 'Belum Tervalidasi', 'Butuh Revisi'], default: 'Belum Tervalidasi' }
+}, { timestamps: { createdAt: 'created_at' } })
 
-module.exports = mongoose.model('ReportSemester', ReportSemesterSchema);
+module.exports = mongoose.model('ReportSemester', ReportSemesterSchema)
