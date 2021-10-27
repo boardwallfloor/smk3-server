@@ -6,7 +6,7 @@ const Report = require('../models/report_semester')
 const Notification = require('../models/notification')
 const User = require('../models/user')
 const exportFile = require('../config/generateExcel/generateExcel')
-const test = require('../config/generateExcel/generateLayout')
+const exportToExcel = require('../config/generateExcel/generateLayout')
 
 const handleFilter = (filter) => {
   const filterJson = JSON.parse(filter)
@@ -394,7 +394,7 @@ exports.export = async (req, res, next) => {
   if (fetchedReport === null) {
     return res.status(400).json('Unable to find data')
   }
-  await test.reportYearTemplate(fetchedReport, res)
+  await exportToExcel.reportSemesterToExcel(fetchedReport, res)
 }
 
 exports.exportall = async (req, res, next) => {

@@ -27,15 +27,22 @@ const TrioBoolQuestionSchema = new Schema({
   c: BoolQuestionSchema
 }, { _id: false })
 
-const OneBoolTwoTextQuestionSchema = new Schema({
-  a: BoolQuestionSchema,
-  b: TextQuestionSchema,
-  c: TextQuestionSchema
-}, { _id: false })
+// const OneBoolTwoTextQuestionSchema = new Schema({
+//   a: BoolQuestionSchema,
+//   b: TextQuestionSchema,
+//   c: TextQuestionSchema
+// }, { _id: false })
 
 const OneBoolOneTextQuestionSchema = new Schema({
   a: BoolQuestionSchema,
   b: TextQuestionSchema
+}, { _id: false })
+
+const FourTextQuestionSchema = new Schema({
+  a: TextQuestionSchema,
+  b: TextQuestionSchema,
+  c: TextQuestionSchema,
+  d: TextQuestionSchema
 }, { _id: false })
 
 const reportGroupSchema = new Schema({
@@ -47,8 +54,13 @@ const reportGroupSchema = new Schema({
     c: BoolQuestionSchema,
     d: BoolQuestionSchema
   },
-  question4: TrioBoolQuestionSchema,
-  question5: TrioBoolQuestionSchema,
+  question4: {
+    a: BoolQuestionSchema,
+    b: BoolQuestionSchema,
+    c: BoolQuestionSchema,
+    d: BoolQuestionSchema
+  },
+  question5: DuoBoolQuestionSchema,
   question6: DuoBoolQuestionSchema,
   question7: TrioBoolQuestionSchema,
   question8: {
@@ -60,7 +72,7 @@ const reportGroupSchema = new Schema({
   question9: BoolQuestionSchema,
   question10: {
     a: BoolQuestionSchema,
-    b: OneBoolTwoTextQuestionSchema,
+    b: FourTextQuestionSchema,
     c: DuoBoolQuestionSchema
   },
   question11: OneBoolOneTextQuestionSchema

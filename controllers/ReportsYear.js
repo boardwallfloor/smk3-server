@@ -7,7 +7,7 @@ const ReportSemester = require('../models/report_semester')
 const Notification = require('../models/notification')
 const User = require('../models/user')
 const exportFile = require('../config/generateExcel/generateExcel')
-const test = require('../config/generateExcel/generateLayout')
+const exportToExcel = require('../config/generateExcel/generateLayout')
 
 const handleFilter = (filter) => {
   const filterJson = JSON.parse(filter)
@@ -142,9 +142,9 @@ const addEmptyFilePropertyToBody = (report) => {
   const pointListFour = ['a', 'b', 'c', 'd']
 
   const questionLengthOne = ['question9']
-  const questionLengthTwo = ['question6', 'question11']
-  const questionLengthThree = ['question1', 'question2', 'question4', 'question5', 'question7']
-  const questionLengthFour = ['question3', 'question8']
+  const questionLengthTwo = ['question6', 'question11', 'question5']
+  const questionLengthThree = ['question1', 'question2', 'question7']
+  const questionLengthFour = ['question3', 'question8', 'question4']
   const questionList = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'question8', 'question9', 'question10', 'question11']
 
   const addEmptyObjectToQuestions = () => {
@@ -252,11 +252,11 @@ const addEmptyFilePropertyToBody = (report) => {
           }
           if (pointListThree[a] === 'b') {
             for (let i = 0; i < pointListThree.length; i++) {
-              if (!report[questions][pointListThree[a]][pointListThree[i]]) {
-                report[questions][pointListThree[a]][pointListThree[i]] = {}
+              if (!report[questions][pointListThree[a]][pointListFour[i]]) {
+                report[questions][pointListThree[a]][pointListFour[i]] = {}
               }
-              if (!report[questions][pointListThree[a]][pointListThree[i]].file) {
-                report[questions][pointListThree[a]][pointListThree[i]].file = {}
+              if (!report[questions][pointListThree[a]][pointListFour[i]].file) {
+                report[questions][pointListThree[a]][pointListFour[i]].file = {}
                 // debug('b %O',report[questions][pointListThree[a]])
               }
             }
@@ -411,6 +411,14 @@ exports.create = async (req, res, next) => {
               title: newFileInput.question4.c.file.title,
               src: newFileInput.question4.c.file.src
             }
+          },
+          d: {
+            information: newFileInput.question4.d.information,
+            comment: newFileInput.question4.d.comment,
+            file: {
+              title: newFileInput.question4.d.file.title,
+              src: newFileInput.question4.d.file.src
+            }
           }
         },
         question5: {
@@ -428,14 +436,6 @@ exports.create = async (req, res, next) => {
             file: {
               title: newFileInput.question5.b.file.title,
               src: newFileInput.question5.b.file.src
-            }
-          },
-          c: {
-            information: newFileInput.question5.c.information,
-            comment: newFileInput.question5.c.comment,
-            file: {
-              title: newFileInput.question5.c.file.title,
-              src: newFileInput.question5.c.file.src
             }
           }
         },
@@ -551,6 +551,10 @@ exports.create = async (req, res, next) => {
             c: {
               information: newFileInput.question10.b.c.information,
               comment: newFileInput.question10.b.c.comment
+            },
+            d: {
+              information: newFileInput.question10.b.d.information,
+              comment: newFileInput.question10.b.d.comment
             }
           },
           c: {
@@ -742,6 +746,14 @@ exports.update = async (req, res, next) => {
                 title: newFileInput.question4.c.file.title,
                 src: newFileInput.question4.c.file.src
               }
+            },
+            d: {
+              information: newFileInput.question4.d.information,
+              comment: newFileInput.question4.d.comment,
+              file: {
+                title: newFileInput.question4.d.file.title,
+                src: newFileInput.question4.d.file.src
+              }
             }
           },
           question5: {
@@ -759,14 +771,6 @@ exports.update = async (req, res, next) => {
               file: {
                 title: newFileInput.question5.b.file.title,
                 src: newFileInput.question5.b.file.src
-              }
-            },
-            c: {
-              information: newFileInput.question5.c.information,
-              comment: newFileInput.question5.c.comment,
-              file: {
-                title: newFileInput.question5.c.file.title,
-                src: newFileInput.question5.c.file.src
               }
             }
           },
@@ -882,6 +886,10 @@ exports.update = async (req, res, next) => {
               c: {
                 information: newFileInput.question10.b.c.information,
                 comment: newFileInput.question10.b.c.comment
+              },
+              d: {
+                information: newFileInput.question10.b.d.information,
+                comment: newFileInput.question10.b.d.comment
               }
             },
             c: {
@@ -971,7 +979,7 @@ exports.export = async (req, res, next) => {
   if (fetchedReport === null) {
     return res.status(400).json('Unable to find data')
   }
-  await test.reportYearTemplate(fetchedReport, res)
+  await exportToExcel.reportYearToExcel(fetchedReport, res)
 }
 
 exports.exportall = async (req, res, next) => {
