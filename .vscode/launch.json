@@ -7,9 +7,14 @@
     {
       "name": "Launch via NPM",
       "request": "launch",
-      "runtimeArgs": ["dev", "dev-debug"],
+      "runtimeArgs": [
+        "dev",
+        "dev-debug"
+      ],
       "runtimeExecutable": "npm",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "type": "pwa-node"
     },
     {
@@ -20,6 +25,19 @@
       "program": "${workspaceFolder}/bin/www",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch via NPMs",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "dev"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }

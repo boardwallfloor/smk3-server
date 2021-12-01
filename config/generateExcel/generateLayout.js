@@ -1,4 +1,5 @@
 const ExcelJS = require('exceljs')
+const debug = require('debug')('excels')
 const { reportYearQuestion } = require('./reportYearQuestion')
 const { reportSemesterQuestion } = require('./reportSemesterQuestion')
 const moment = require('moment')
@@ -12,13 +13,17 @@ const handleUndefined = (data, type) => {
     }
   }
   if (type === 'year') {
+    debug(typeof data.information)
     if (typeof data === 'undefined') {
       return '-'
     } else {
-      if (data.information) {
+      if (typeof data.information == 'string') {
+        return data.information
+      }
+      if (data.information && typeof data.information != 'string') {
         return 'Ada'
       }
-      if (!data.information) {
+      if (!data.information && typeof data.information != 'string') {
         return 'Tidak ada'
       }
     }
@@ -170,6 +175,8 @@ exports.reportYearToExcel = async (data, res) => {
         sheet.getCell(`B${rowCount}`).value = handleUndefined(data.report[questionList[i]].b.c, 'year')
         rowCount++
         sheet.getCell(`B${rowCount}`).value = handleUndefined(data.report[questionList[i]].b.d, 'year')
+        rowCount++
+        sheet.getCell(`B${rowCount}`).value = handleUndefined(data.report[questionList[i]].b.e, 'year')
         rowCount++
         sheet.getCell(`B${rowCount}`).value = handleUndefined(data.report[questionList[i]].c.a, 'year')
         rowCount++

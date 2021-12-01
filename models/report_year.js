@@ -38,11 +38,12 @@ const OneBoolOneTextQuestionSchema = new Schema({
   b: TextQuestionSchema
 }, { _id: false })
 
-const FourTextQuestionSchema = new Schema({
+const FourTextOneBoolQuestionSchema = new Schema({
   a: TextQuestionSchema,
   b: TextQuestionSchema,
   c: TextQuestionSchema,
-  d: TextQuestionSchema
+  d: TextQuestionSchema,
+  e: BoolQuestionSchema,
 }, { _id: false })
 
 const reportGroupSchema = new Schema({
@@ -72,7 +73,7 @@ const reportGroupSchema = new Schema({
   question9: BoolQuestionSchema,
   question10: {
     a: BoolQuestionSchema,
-    b: FourTextQuestionSchema,
+    b: FourTextOneBoolQuestionSchema,
     c: DuoBoolQuestionSchema
   },
   question11: OneBoolOneTextQuestionSchema

@@ -131,7 +131,7 @@ exports.show_all = async (req, res, next) => {
       [start, limitation] = range
     }
 
-    if (req.query.filter !== undefined) {
+    if (req.query.filter !== undefined && req.query.filter !== '') {
       filter = await handleFilter(req.query.filter)
     }
 

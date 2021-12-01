@@ -140,6 +140,7 @@ const addEmptyFilePropertyToBody = (report) => {
   const pointListTwo = ['a', 'b']
   const pointListThree = ['a', 'b', 'c']
   const pointListFour = ['a', 'b', 'c', 'd']
+  const pointListFive = ['a', 'b', 'c', 'd','e']
 
   const questionLengthOne = ['question9']
   const questionLengthTwo = ['question6', 'question11', 'question5']
@@ -251,12 +252,12 @@ const addEmptyFilePropertyToBody = (report) => {
             }
           }
           if (pointListThree[a] === 'b') {
-            for (let i = 0; i < pointListThree.length; i++) {
-              if (!report[questions][pointListThree[a]][pointListFour[i]]) {
-                report[questions][pointListThree[a]][pointListFour[i]] = {}
+            for (let i = 0; i < pointListFive.length; i++) {
+              if (!report[questions][pointListThree[a]][pointListFive[i]]) {
+                report[questions][pointListThree[a]][pointListFive[i]] = {}
               }
-              if (!report[questions][pointListThree[a]][pointListFour[i]].file) {
-                report[questions][pointListThree[a]][pointListFour[i]].file = {}
+              if (!report[questions][pointListThree[a]][pointListFive[i]].file) {
+                report[questions][pointListThree[a]][pointListFive[i]].file = {}
                 // debug('b %O',report[questions][pointListThree[a]])
               }
             }
@@ -555,6 +556,10 @@ exports.create = async (req, res, next) => {
             d: {
               information: newFileInput.question10.b.d.information,
               comment: newFileInput.question10.b.d.comment
+            },
+            e: {
+              information: newFileInput.question10.b.e.information,
+              comment: newFileInput.question10.b.e.comment
             }
           },
           c: {
@@ -612,6 +617,7 @@ exports.create = async (req, res, next) => {
       res.json(results)
     })
   } catch (err) {
+    debug(err)
     return res.status(500).json('Server error')
   }
 }
@@ -629,7 +635,6 @@ exports.update = async (req, res, next) => {
       debug('New File Input : %O', newFileInput)
 
       const report = new Report({
-        _id: req.body._id,
         author: req.body.author,
         totalSDM: req.body.totalSDM,
         institution: req.body.institution,
@@ -860,7 +865,7 @@ exports.update = async (req, res, next) => {
               src: newFileInput.question9.file.src
             }
           },
-
+  
           question10: {
             a: {
               information: newFileInput.question10.a.information,
@@ -890,6 +895,10 @@ exports.update = async (req, res, next) => {
               d: {
                 information: newFileInput.question10.b.d.information,
                 comment: newFileInput.question10.b.d.comment
+              },
+              e: {
+                information: newFileInput.question10.b.e.information,
+                comment: newFileInput.question10.b.e.comment
               }
             },
             c: {
@@ -1004,17 +1013,51 @@ exports.exportall = async (req, res, next) => {
   debug('Query : %O', req.query)
   let filter
 
-  if (req.query.filter != undefined) {
+  if (req.query.filter !== undefined) {
+    // handle date, institution
     filter = await handleFilter(req.query.filter)
     debug('filter in Json : %o', filter)
+    if (filter.hasOwnProperty('username')) {
+      debug('Query username : %o', filter.username)
+      const results = await User.find({ username: filter.username }).select('_id').exec()
+      debug('User id : %o', results)
+      filter.author = results[0]._id
+      delete filter.username
+    }
+    if (filter.hasOwnProperty('date')) {
+      debug('Input Date : %o', filter.date)
+      const [queryDateStart, queryDateEnd] = filter.date
+      let inputMonthMin, inputMonthMax
 
-    const results = await User.find({ username: filter.username }).select('_id').exec()
-    filter.author = results[0]._id
-    delete filter.username
+      dateStart = new Date(queryDateStart)
+      dateEnd = new Date(queryDateEnd)
+
+      debug('dateStart : %o', dateStart)
+      debug('dateEnd : %o', dateEnd)
+
+      const dateStartObject = {
+        year: dateStart.getFullYear(),
+        month: dateStart.getMonth(),
+        date: dateStart.getDay()
+      }
+      const dateEndObject = {
+        year: dateEnd.getFullYear(),
+        month: dateEnd.getMonth(),
+        date: dateEnd.getDay()
+      }
+
+      debug('dateStartObject : %o', dateStartObject)
+      debug('dateEndObject : %o', dateEndObject)
+      filter.date = { $gte: `${dateStartObject.year}-${dateStartObject.month}-${dateStartObject.date}`, $lte: `${dateEndObject.year}-${dateEndObject.month}-${dateEndObject.date}` }
+    }
+    if (filter.hasOwnProperty('institution')) {
+
+    }
   }
+  debug('Filter used : %o', filter)
 
   debug(excludedFileList)
-  Report.find().select(excludedFileList).populate('institution', 'name').populate('author', 'full_name').exec(
+  Report.find(filter).select(excludedFileList).populate('institution', 'name').populate('author', 'full_name').exec(
     async (err, results) => {
       if (err) { return next(err) }
       debug(results)
