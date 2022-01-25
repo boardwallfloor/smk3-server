@@ -635,6 +635,7 @@ exports.update = async (req, res, next) => {
       debug('New File Input : %O', newFileInput)
 
       const report = new Report({
+        _id : req.params.id,
         author: req.body.author,
         totalSDM: req.body.totalSDM,
         institution: req.body.institution,
@@ -1057,12 +1058,12 @@ exports.exportall = async (req, res, next) => {
   debug('Filter used : %o', filter)
 
   debug(excludedFileList)
-  Report.find(filter).select(excludedFileList).populate('institution', 'name').populate('author', 'full_name').exec(
+  Report.find(filter).select(excludedFileList).populate('institution', 'name').populate('author', 'full_name').lean().exec(
     async (err, results) => {
       if (err) { return next(err) }
       debug(results)
       debug('Generating file')
-      await exportFile.reportsYearAllToExcel(results, res, results.length)
+      await exportToExcel.allReportYearToExcel(results, res)
     }
   )
 }

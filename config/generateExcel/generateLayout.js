@@ -1,5 +1,5 @@
 const ExcelJS = require('exceljs')
-const debug = require('debug')('excels')
+const debug = require('debug')('export')
 const { reportYearQuestion } = require('./reportYearQuestion')
 const { reportSemesterQuestion } = require('./reportSemesterQuestion')
 const moment = require('moment')
@@ -13,8 +13,7 @@ const handleUndefined = (data, type) => {
     }
   }
   if (type === 'year') {
-    debug(typeof data.information)
-    if (typeof data === 'undefined') {
+    if (typeof data === 'undefined' || typeof data.information === 'undefined') {
       return '-'
     } else {
       if (typeof data.information == 'string') {
@@ -35,18 +34,21 @@ const reportYearTemplate = async (data, res) => {
   const sheet = workbook.addWorksheet('sheet', {
     pageSetup: { fitToPage: true, fitToHeight: 1 }
   })
-  // data.author.full_name
   sheet.getCell('A1').value = 'Nama Operator'
-  sheet.getCell('B1').value = data.author.full_name
-  // date
   sheet.getCell('A2').value = 'Tanggal Laporan'
-  sheet.getCell('B2').value = moment(data.date).format('DD-MM-YYYY')
-  // institution.name
   sheet.getCell('A3').value = 'Nama Fasyankes'
-  sheet.getCell('B3').value = data.institution.name
-  // validated
   sheet.getCell('A4').value = 'Status Validasi'
-  sheet.getCell('B4').value = data.validated
+  // data.author.full_name
+  for(let i = 0 ; i < data.length; i++){
+    let columnLetter = String.fromCharCode(66+i)
+    sheet.getCell(`${columnLetter}1`).value = data[i].author.full_name
+    // date
+    sheet.getCell(`${columnLetter}2`).value = moment(data[i].date).format('DD-MM-YYYY')
+    // institution.name
+    sheet.getCell(`${columnLetter}3`).value = data[i].institution.name
+    // validated
+    sheet.getCell(`${columnLetter}4`).value = data[i].validated
+  }
   let rowCount = 5
   reportYearQuestion.map((props) => {
     for (const field in props) {
@@ -142,6 +144,7 @@ exports.reportYearToExcel = async (data, res) => {
     let rowCount = 5
 
     for (let i = 0; i < questionList.length; i++) {
+      debug(rowCount)
       if (questionLengthOne.indexOf(Object.keys(data.report)[i]) !== -1) {
         sheet.getCell(`B${rowCount}`).value = handleUndefined(data.report[questionList[i]], 'year')
         rowCount++
@@ -184,6 +187,70 @@ exports.reportYearToExcel = async (data, res) => {
         rowCount++
       }
     }
+
+    await workbook.xlsx.write(res)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
+}
+
+exports.allReportYearToExcel = async (data, res) => {
+  try {
+    const { workbook, sheet } = await reportYearTemplate(data)
+    debug(data)
+    const questionLengthOne = ['question9']
+    const questionLengthTwo = ['question6', 'question11', 'question5']
+    const questionLengthThree = ['question1', 'question2', 'question7']
+    const questionLengthFour = ['question3', 'question8', 'question4']
+    const questionList = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'question8', 'question9', 'question10', 'question11']
+    for(let a = 0; a < data.length; a++){
+      let columnLetterNumber = 66
+      let rowCount = 5
+      for (let i = 0; i < questionList.length; i++) {
+        let columnLetter = String.fromCharCode(columnLetterNumber + a)
+      if (questionLengthOne.indexOf(Object.keys(data[a].report)[i]) !== -1) {
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]], 'year')
+        rowCount++
+      }
+      if (questionLengthTwo.indexOf(Object.keys(data[a].report)[i]) !== -1) {
+        for (const props in data[a].report[questionList[i]]) {
+          sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]][props], 'year')
+          rowCount++
+        }
+      }
+      if (questionLengthThree.indexOf(Object.keys(data[a].report)[i]) !== -1) {
+        for (const props in data[a].report[questionList[i]]) {
+          sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]][props], 'year')
+          rowCount++
+        }
+      }
+      if (questionLengthFour.indexOf(Object.keys(data[a].report)[i]) !== -1) {
+        for (const props in data[a].report[questionList[i]]) {
+          sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]][props], 'year')
+          rowCount++
+        }
+      }
+      
+      if (Object.keys(data[a].report)[i] === 'question10') {
+        
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].a, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].b.a, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].b.b, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].b.c, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].b.d, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].b.e, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].c.a, 'year')
+        rowCount++
+        sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(data[a].report[questionList[i]].c.b, 'year')
+        rowCount++
+      }
+    }}
 
     await workbook.xlsx.write(res)
   } catch (error) {

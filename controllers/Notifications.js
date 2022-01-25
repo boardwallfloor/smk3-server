@@ -2,7 +2,7 @@ const async = require('async')
 const debug = require('debug')('notif')
 const { body, validationResult } = require('express-validator')
 const moment = require('moment')
-
+moment.locale('id')
 const cronjob = require('../config/CronJob')
 const Notification = require('../models/notification')
 const reportYear = require('../models/report_year')
@@ -40,8 +40,10 @@ const dateToSemester = (date) => {
   return dateToMonthIndex < 6 ? 'Ganjil' : 'Genap'
 }
 
-const findReportYearQuery = (inputDate, inputRemindee) => {
-  return reportYear.findOne({ year: { $gte: `${inputDate}-00-01`, $lte: `${inputDate}-12-31` }, author: inputRemindee })
+const findReportYearQuery = (year, author) => {
+  const startDate = new Date(moment(`${year}-01-01`).format())
+  const endDate = new Date(moment(`${year}-12-31`).format())
+  return reportYear.findOne({ year: { $gte:startDate, $lte: endDate }, author: author })
 }
 
 const findReportSemesterQuery = (inputYear, inputMonth, inputRemindee) => {
@@ -194,6 +196,7 @@ exports.create = [
       debug(req.body.remind_date)
       let isReportExist = false
       let isDateValid = true
+      let reportType
       const inputDateYear = req.body.remind_date.getFullYear()
       const inputDateMonth = req.body.remind_date.getMonth()
       const inputRemindee = req.body.remindee
@@ -210,6 +213,7 @@ exports.create = [
           const result = await findReportYearQuery(inputDateYear, inputRemindee)
           debug('Data query result %O', result)
           if (result) {
+            reportType = 'per tahun'
             isReportExist = true
           }
         }
@@ -217,13 +221,14 @@ exports.create = [
           const result = await findReportSemesterQuery(inputDateYear, inputDateMonth, inputRemindee)
           debug('Data query result %O', result)
           if (result) {
+            reportType = 'per semester'
             isReportExist = true
           }
         }
         debug('Exist status %O', isReportExist)
         if (isReportExist) {
           res.status(400).send({
-					   message: `Laporan oleh ${inputRemindee} pada rentang tanggal yang dikirim telah ada. Notifikasi tidak dapat dibuat`
+					   message: `Laporan pada rentang tanggal yang dikirim telah ada. Notifikasi tidak akan terbuat, cek daftar laporan ${reportType} apakah laporan telah ada`
           })
         }
         if (!isReportExist) {
