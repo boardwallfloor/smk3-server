@@ -88,18 +88,23 @@ const reportSemesterTemplate = async (data) => {
     sheet.getCell(`A${rowCount}`).value = props.question
     rowCount++
   })
-  // data.author.full_name
   sheet.getCell('A1').value = 'Nama Operator'
-  sheet.getCell('B1').value = data.author.full_name
-  // date
   sheet.getCell('A2').value = 'Tanggal Laporan'
-  sheet.getCell('B2').value = moment(data.date).format('DD-MM-YYYY')
-  // institution.name
   sheet.getCell('A3').value = 'Nama Fasyankes'
-  sheet.getCell('B3').value = data.institution.name
-  // validated
   sheet.getCell('A4').value = 'Status Validasi'
-  sheet.getCell('B4').value = data.validated
+  
+  
+  for(let i = 0 ; i < data.length; i++){
+    let columnLetter = String.fromCharCode(66 + i)
+    // data.author.full_name
+    sheet.getCell(`${columnLetter}1`).value = data[i].author.full_name
+    // date
+    sheet.getCell(`${columnLetter}2`).value = moment(data[i].date).format('DD-MM-YYYY')
+    // institution.name
+    sheet.getCell(`${columnLetter}3`).value = data[i].institution.name
+    // validated
+    sheet.getCell(`${columnLetter}4`).value = data[i].validated
+  }
   sheet.columns.forEach(function (column, i) {
     let maxLength = 0
     column.eachCell(function (cell) {
@@ -128,6 +133,20 @@ exports.reportSemesterToExcel = async (data, res) => {
   reportSemesterQuestion.map((props) => {
     sheet.getCell(`B${rowCount}`).value = handleUndefined(data.report[questionList[rowCount - 1]], 'semester')
     rowCount++
+  })
+  await workbook.xlsx.write(res)
+}
+
+exports.allReportSemesterToExcel = async (data, res) => {
+  const { workbook, sheet } = await reportSemesterTemplate(data)
+  const questionList = ['question1', 'question2', 'question3', 'question4', 'question5', 'question6', 'question7', 'question8']
+  data.map((elem, index) => {
+    let rowCount = 5
+    reportSemesterQuestion.map((props) => {
+      let columnLetter = String.fromCharCode(66 + index)
+      sheet.getCell(`${columnLetter}${rowCount}`).value = handleUndefined(elem.report[questionList[rowCount - 1]], 'semester')
+      rowCount++
+    })
   })
   await workbook.xlsx.write(res)
 }

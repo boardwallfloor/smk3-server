@@ -457,7 +457,7 @@ exports.exportall = async (req, res, next) => {
       if (err) { return next(err) }
       debug(results)
       debug('Generating file')
-      await exportFile.reportsSemesterAllToExcel(results, res, results.length)
+      await exportToExcel.allReportSemesterToExcel(results, res)
       // res.json(results)
     }
   )
